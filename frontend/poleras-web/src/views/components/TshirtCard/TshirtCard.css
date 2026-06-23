@@ -1,0 +1,79 @@
+/* ==========================================
+   TARJETA DE POLERA (MINIMALISTA BLANCO Y NEGRO)
+   ========================================== */
+.tshirt-card {
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e1e1e1;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.tshirt-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.tshirt-card__image-container {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background-color: #f6f6f6;
+    position: relative;
+    border-bottom: 1px solid #111111;
+}
+
+.tshirt-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.tshirt-card__content {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* Fila superior: Título a la izquierda, Precio a la derecha */
+.tshirt-card__info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+}
+
+.tshirt-card__title {
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0;
+    color: #111111;
+    text-align: left;
+    line-height: 1.3;
+}
+
+.tshirt-card__price {
+    font-size: 14px;
+    font-weight: 700;
+    color: #111111;
+    white-space: nowrap;
+}
+
+/* Fila inferior: Categoría debajo del título */
+.tshirt-card__category {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #666666;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-align: left;
+}
+
+.tshirt-card--inactive {
+    opacity: 0.4;
+    filter: grayscale(100%);
+}

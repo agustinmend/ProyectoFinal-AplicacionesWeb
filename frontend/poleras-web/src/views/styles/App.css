@@ -1,0 +1,360 @@
+/* ==========================================
+   DISEÑO GENERAL Y VARIABLES
+   ========================================== */
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg);
+  color: var(--text);
+  box-sizing: border-box;
+}
+
+/* ==========================================
+   ENCABEZADO (HEADER)
+   ========================================== */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 40px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: background-color 0.3s;
+}
+
+@media (prefers-color-scheme: dark) {
+  .header {
+    background: rgba(22, 23, 29, 0.8);
+  }
+}
+
+.header__brand span {
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.header__title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+/* Barra de Búsqueda */
+.header__search-container {
+  position: relative;
+  width: 40%;
+  max-width: 500px;
+  display: flex;
+  align-items: center;
+  background-color: gray;
+}
+
+.header__search-input {
+  width: 100%;
+  padding: 10px 16px;
+  padding-right: 40px;
+  border-radius: 4px;
+  border: 1px solid #111111;
+  background: var(--bg);
+  color: var(--text-h);
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.header__search-input:focus {
+  border-color: #000000;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.header__search-icon {
+  position: absolute;
+  right: 14px;
+  font-size: 16px;
+  pointer-events: none;
+}
+
+/* Acciones (Login, Carrito) */
+.header__actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header__btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 4px;
+  border: 1px solid #111111;
+  background: var(--bg);
+  color: var(--text-h);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.header__btn:hover {
+  border-color: #000000;
+  background: #f5f5f5;
+  transform: translateY(-1px);
+}
+
+.header__btn--cart {
+  position: relative;
+  background: #000000;
+  color: #ffffff;
+  border: 1px solid #000000;
+}
+
+.header__btn--cart:hover {
+  background: #ffffff;
+  color: #000000;
+  border-color: #000000;
+}
+
+.header__cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #ff4757;
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px 20px;
+  }
+
+  .header__search-container {
+    width: 100%;
+  }
+
+  .header__actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* ==========================================
+   BANNER INFORMATIVO (HERO SECTION)
+   ========================================== */
+.hero {
+  position: relative;
+  background: #000000;
+  padding: 100px 40px;
+  text-align: center;
+  border-bottom: 1px solid #111111;
+}
+
+.hero__overlay {
+  display: none;
+}
+
+.hero__content {
+  position: relative;
+  z-index: 2;
+  max-width: 700px;
+  margin: 0 auto;
+  color: #ffffff;
+}
+
+.hero__title {
+  font-size: 42px;
+  font-weight: 800;
+  margin: 0 0 16px;
+  color: #ffffff;
+  letter-spacing: -1px;
+}
+
+.hero__description {
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 28px;
+  color: #e2e8f0;
+}
+
+.hero__cta-btn {
+  background: #ffffff;
+  color: #000000;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 14px 32px;
+  border-radius: 4px;
+  border: 1px solid #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.hero__cta-btn:hover {
+  background: #000000;
+  color: #ffffff;
+  border-color: #ffffff;
+  transform: scale(1.03);
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding: 60px 20px;
+  }
+
+  .hero__title {
+    font-size: 32px;
+  }
+}
+
+/* ==========================================
+   SECCIÓN DE CATEGORÍAS
+   ========================================== */
+.categories-section {
+  padding: 32px 40px 12px;
+}
+
+.section-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 20px;
+  text-align: left;
+}
+
+.categories-bar {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scrollbar-width: thin;
+}
+
+.category-pill {
+  padding: 10px 22px;
+  border-radius: 4px;
+  border: 1px solid #111111;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.category-pill:hover {
+  background: #f5f5f5;
+  border-color: #000000;
+}
+
+.category-pill--active {
+  background: #000000;
+  color: #ffffff;
+  border-color: #000000;
+}
+
+.category-pill--active:hover {
+  background: #000000;
+  color: #ffffff;
+  border-color: #000000;
+}
+
+/* ==========================================
+   SECCIÓN DE CATÁLOGO (GRILLA)
+   ========================================== */
+.catalog-section {
+  flex-grow: 1;
+  padding: 0 40px 60px;
+}
+
+.catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 30px;
+}
+
+/* Tablets */
+@media (min-width: 640px) {
+  .catalog-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Notebooks / PCs pequeños */
+@media (min-width: 900px) {
+  .catalog-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Desktop */
+@media (min-width: 1200px) {
+  .catalog-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Estados de carga / errores / vacío */
+.catalog-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  color: var(--text);
+  font-size: 16px;
+}
+
+.catalog-status--error {
+  color: #ff4757;
+  font-weight: 600;
+}
+
+/* Spinner animado */
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 1s infinite linear;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================
+   PIE DE PÁGINA (FOOTER)
+   ========================================== */
+.footer {
+  text-align: center;
+  padding: 24px;
+  border-top: 1px solid var(--border);
+  background: var(--code-bg);
+  font-size: 13px;
+  color: var(--text);
+}
