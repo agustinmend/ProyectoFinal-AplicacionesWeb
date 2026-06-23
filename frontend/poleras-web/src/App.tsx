@@ -49,12 +49,13 @@ function App() {
 
       {/* 2. BANNER INFORMATIVO (HERO SECTION) */}
       <section className="hero">
-        <div className="hero__overlay"></div>
         <div className="hero__content">
-          <h2 className="hero__title">Diseña tu propio estilo</h2>
-          <p className="hero__description">
-            Elige entre nuestras poleras base de algodón premium, selecciona tu color preferido y añade tus diseños favoritos de manera 100% personalizada.
-          </p>
+          <div className="hero__panel">
+            <h2 className="hero__title">Diseña tu propio estilo</h2>
+            <p className="hero__description">
+              Elige entre nuestras poleras base de algodón premium, selecciona tu color preferido y añade tus diseños favoritos de manera 100% personalizada.
+            </p>
+          </div>
           <button className="hero__cta-btn" onClick={handlePersonalizeClick}>
             Personalizar Polera 🎨
           </button>
