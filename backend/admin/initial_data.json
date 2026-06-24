@@ -1,0 +1,389 @@
+[
+  {
+    "model": "catalog.category",
+    "pk": "11111111-0000-0000-0000-000000000001",
+    "fields": {
+      "name": "Básicas",
+      "slug": "basicas",
+      "is_active": true,
+      "created": "2026-01-01T00:00:00Z",
+      "modified": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": "11111111-0000-0000-0000-000000000002",
+    "fields": {
+      "name": "Premium",
+      "slug": "premium",
+      "is_active": true,
+      "created": "2026-01-01T00:00:00Z",
+      "modified": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": "11111111-0000-0000-0000-000000000003",
+    "fields": {
+      "name": "Deportivas",
+      "slug": "deportivas",
+      "is_active": true,
+      "created": "2026-01-01T00:00:00Z",
+      "modified": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": "11111111-0000-0000-0000-000000000004",
+    "fields": {
+      "name": "Oversize",
+      "slug": "oversize",
+      "is_active": true,
+      "created": "2026-01-01T00:00:00Z",
+      "modified": "2026-01-01T00:00:00Z"
+    }
+  },
+
+  {
+    "model": "catalog.tshirt",
+    "pk": "22222222-0000-0000-0000-000000000001",
+    "fields": {
+      "category": "11111111-0000-0000-0000-000000000001",
+      "name": "Polera cuello redondo básica",
+      "description": "Polera de algodón 100% con cuello redondo. Ideal para el día a día, disponible en múltiples tallas. Confección de alta durabilidad con costuras reforzadas.",
+      "material": "100% Algodón",
+      "base_price": "9990.00",
+      "is_active": true,
+      "created": "2026-01-05T00:00:00Z",
+      "modified": "2026-01-05T00:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.tshirt",
+    "pk": "22222222-0000-0000-0000-000000000002",
+    "fields": {
+      "category": "11111111-0000-0000-0000-000000000001",
+      "name": "Polera cuello V básica",
+      "description": "Polera con escote en V de corte slim. Tejido suave al tacto, ideal para personalización en pecho o espalda.",
+      "material": "100% Algodón",
+      "base_price": "10990.00",
+      "is_active": true,
+      "created": "2026-01-06T00:00:00Z",
+      "modified": "2026-01-06T00:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.tshirt",
+    "pk": "22222222-0000-0000-0000-000000000003",
+    "fields": {
+      "category": "11111111-0000-0000-0000-000000000002",
+      "name": "Polera premium pima",
+      "description": "Confeccionada con algodón pima peruano de primera calidad. Suavidad superior y larga duración del color. Perfecta para estampados de alta resolución.",
+      "material": "Algodón Pima",
+      "base_price": "18990.00",
+      "is_active": true,
+      "created": "2026-01-07T00:00:00Z",
+      "modified": "2026-01-07T00:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.tshirt",
+    "pk": "22222222-0000-0000-0000-000000000004",
+    "fields": {
+      "category": "11111111-0000-0000-0000-000000000002",
+      "name": "Polera premium modal",
+      "description": "Tela modal de origen bambú. Extremadamente suave, transpirable y resistente al lavado. Ideal para looks casuales y corporativos.",
+      "material": "Modal (bambú)",
+      "base_price": "21990.00",
+      "is_active": true,
+      "created": "2026-01-08T00:00:00Z",
+      "modified": "2026-01-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.tshirt",
+    "pk": "22222222-0000-0000-0000-000000000005",
+    "fields": {
+      "category": "11111111-0000-0000-0000-000000000003",
+      "name": "Polera deportiva dry-fit",
+      "description": "Tecnología de secado rápido para actividad física intensa. Tela microperforada que permite la circulación de aire y absorbe la humedad.",
+      "material": "Poliéster 100% dry-fit",
+      "base_price": "14990.00",
+      "is_active": true,
+      "created": "2026-01-09T00:00:00Z",
+      "modified": "2026-01-09T00:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.tshirt",
+    "pk": "22222222-0000-0000-0000-000000000006",
+    "fields": {
+      "category": "11111111-0000-0000-0000-000000000003",
+      "name": "Polera deportiva compresión",
+      "description": "Diseño de compresión muscular para mejorar el rendimiento deportivo. Tela elástica en 4 direcciones. Ideal para running, ciclismo y crossfit.",
+      "material": "85% Poliéster, 15% Elastano",
+      "base_price": "16990.00",
+      "is_active": true,
+      "created": "2026-01-10T00:00:00Z",
+      "modified": "2026-01-10T00:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.tshirt",
+    "pk": "22222222-0000-0000-0000-000000000007",
+    "fields": {
+      "category": "11111111-0000-0000-0000-000000000004",
+      "name": "Polera oversize urbana",
+      "description": "Corte amplio y caído con hombros caídos. Tendencia streetwear para looks urbanos. Gran superficie de estampado, ideal para diseños grandes.",
+      "material": "65% Algodón, 35% Poliéster",
+      "base_price": "13990.00",
+      "is_active": true,
+      "created": "2026-01-11T00:00:00Z",
+      "modified": "2026-01-11T00:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.tshirt",
+    "pk": "22222222-0000-0000-0000-000000000008",
+    "fields": {
+      "category": "11111111-0000-0000-0000-000000000004",
+      "name": "Polera oversize crop",
+      "description": "Versión corta del oversize clásico. Diseño moderno y versátil, pensado para looks femeninos y mixtos. Disponible en tallas únicas S/M y L/XL.",
+      "material": "70% Algodón, 30% Poliéster",
+      "base_price": "12990.00",
+      "is_active": true,
+      "created": "2026-01-12T00:00:00Z",
+      "modified": "2026-01-12T00:00:00Z"
+    }
+  },
+
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0001-000000000001",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000001", "size_label": "S",   "is_available": true,  "created": "2026-01-05T00:00:00Z", "modified": "2026-01-05T00:00:00Z" }
+  },
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0001-000000000002",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000001", "size_label": "M",   "is_available": true,  "created": "2026-01-05T00:00:00Z", "modified": "2026-01-05T00:00:00Z" }
+  },
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0001-000000000003",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000001", "size_label": "L",   "is_available": true,  "created": "2026-01-05T00:00:00Z", "modified": "2026-01-05T00:00:00Z" }
+  },
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0001-000000000004",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000001", "size_label": "XL",  "is_available": true,  "created": "2026-01-05T00:00:00Z", "modified": "2026-01-05T00:00:00Z" }
+  },
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0001-000000000005",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000001", "size_label": "XXL", "is_available": false, "created": "2026-01-05T00:00:00Z", "modified": "2026-01-05T00:00:00Z" }
+  },
+
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0002-000000000001",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000002", "size_label": "XS",  "is_available": true,  "created": "2026-01-06T00:00:00Z", "modified": "2026-01-06T00:00:00Z" }
+  },
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0002-000000000002",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000002", "size_label": "S",   "is_available": true,  "created": "2026-01-06T00:00:00Z", "modified": "2026-01-06T00:00:00Z" }
+  },
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0002-000000000003",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000002", "size_label": "M",   "is_available": true,  "created": "2026-01-06T00:00:00Z", "modified": "2026-01-06T00:00:00Z" }
+  },
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0002-000000000004",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000002", "size_label": "L",   "is_available": true,  "created": "2026-01-06T00:00:00Z", "modified": "2026-01-06T00:00:00Z" }
+  },
+
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0003-000000000001",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000003", "size_label": "S",   "is_available": true,  "created": "2026-01-07T00:00:00Z", "modified": "2026-01-07T00:00:00Z" }
+  },
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0003-000000000002",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000003", "size_label": "M",   "is_available": true,  "created": "2026-01-07T00:00:00Z", "modified": "2026-01-07T00:00:00Z" }
+  },
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0003-000000000003",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000003", "size_label": "L",   "is_available": true,  "created": "2026-01-07T00:00:00Z", "modified": "2026-01-07T00:00:00Z" }
+  },
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0003-000000000004",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000003", "size_label": "XL",  "is_available": false, "created": "2026-01-07T00:00:00Z", "modified": "2026-01-07T00:00:00Z" }
+  },
+
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0004-000000000001",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000004", "size_label": "XS",  "is_available": true,  "created": "2026-01-08T00:00:00Z", "modified": "2026-01-08T00:00:00Z" }
+  },
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0004-000000000002",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000004", "size_label": "S",   "is_available": true,  "created": "2026-01-08T00:00:00Z", "modified": "2026-01-08T00:00:00Z" }
+  },
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0004-000000000003",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000004", "size_label": "M",   "is_available": true,  "created": "2026-01-08T00:00:00Z", "modified": "2026-01-08T00:00:00Z" }
+  },
+
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0005-000000000001",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000005", "size_label": "S",   "is_available": true,  "created": "2026-01-09T00:00:00Z", "modified": "2026-01-09T00:00:00Z" }
+  },
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0005-000000000002",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000005", "size_label": "M",   "is_available": true,  "created": "2026-01-09T00:00:00Z", "modified": "2026-01-09T00:00:00Z" }
+  },
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0005-000000000003",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000005", "size_label": "L",   "is_available": true,  "created": "2026-01-09T00:00:00Z", "modified": "2026-01-09T00:00:00Z" }
+  },
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0005-000000000004",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000005", "size_label": "XL",  "is_available": true,  "created": "2026-01-09T00:00:00Z", "modified": "2026-01-09T00:00:00Z" }
+  },
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0005-000000000005",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000005", "size_label": "XXL", "is_available": true,  "created": "2026-01-09T00:00:00Z", "modified": "2026-01-09T00:00:00Z" }
+  },
+
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0006-000000000001",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000006", "size_label": "S",   "is_available": true,  "created": "2026-01-10T00:00:00Z", "modified": "2026-01-10T00:00:00Z" }
+  },
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0006-000000000002",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000006", "size_label": "M",   "is_available": true,  "created": "2026-01-10T00:00:00Z", "modified": "2026-01-10T00:00:00Z" }
+  },
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0006-000000000003",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000006", "size_label": "L",   "is_available": false, "created": "2026-01-10T00:00:00Z", "modified": "2026-01-10T00:00:00Z" }
+  },
+
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0007-000000000001",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000007", "size_label": "S",   "is_available": true,  "created": "2026-01-11T00:00:00Z", "modified": "2026-01-11T00:00:00Z" }
+  },
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0007-000000000002",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000007", "size_label": "M",   "is_available": true,  "created": "2026-01-11T00:00:00Z", "modified": "2026-01-11T00:00:00Z" }
+  },
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0007-000000000003",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000007", "size_label": "L",   "is_available": true,  "created": "2026-01-11T00:00:00Z", "modified": "2026-01-11T00:00:00Z" }
+  },
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0007-000000000004",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000007", "size_label": "XL",  "is_available": true,  "created": "2026-01-11T00:00:00Z", "modified": "2026-01-11T00:00:00Z" }
+  },
+
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0008-000000000001",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000008", "size_label": "S",   "is_available": true,  "created": "2026-01-12T00:00:00Z", "modified": "2026-01-12T00:00:00Z" }
+  },
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0008-000000000002",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000008", "size_label": "M",   "is_available": true,  "created": "2026-01-12T00:00:00Z", "modified": "2026-01-12T00:00:00Z" }
+  },
+  {
+    "model": "catalog.tshirtsize",
+    "pk": "33333333-0000-0000-0008-000000000003",
+    "fields": { "t_shirt": "22222222-0000-0000-0000-000000000008", "size_label": "L",   "is_available": false, "created": "2026-01-12T00:00:00Z", "modified": "2026-01-12T00:00:00Z" }
+  },
+
+  {
+    "model": "catalog.presetdesign",
+    "pk": "44444444-0000-0000-0000-000000000001",
+    "fields": {
+      "name": "Llamas geométricas",
+      "image": "designs/placeholder.png",
+      "is_active": true,
+      "created": "2026-01-15T00:00:00Z",
+      "modified": "2026-01-15T00:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.presetdesign",
+    "pk": "44444444-0000-0000-0000-000000000002",
+    "fields": {
+      "name": "Abstracto azul",
+      "image": "designs/placeholder.png",
+      "is_active": true,
+      "created": "2026-01-15T00:00:00Z",
+      "modified": "2026-01-15T00:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.presetdesign",
+    "pk": "44444444-0000-0000-0000-000000000003",
+    "fields": {
+      "name": "Montañas minimalistas",
+      "image": "designs/placeholder.png",
+      "is_active": true,
+      "created": "2026-01-15T00:00:00Z",
+      "modified": "2026-01-15T00:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.presetdesign",
+    "pk": "44444444-0000-0000-0000-000000000004",
+    "fields": {
+      "name": "Floral vintage",
+      "image": "designs/placeholder.png",
+      "is_active": true,
+      "created": "2026-01-15T00:00:00Z",
+      "modified": "2026-01-15T00:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.presetdesign",
+    "pk": "44444444-0000-0000-0000-000000000005",
+    "fields": {
+      "name": "Calavera urbana",
+      "image": "designs/placeholder.png",
+      "is_active": true,
+      "created": "2026-01-15T00:00:00Z",
+      "modified": "2026-01-15T00:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.presetdesign",
+    "pk": "44444444-0000-0000-0000-000000000006",
+    "fields": {
+      "name": "Tipografía retro",
+      "image": "designs/placeholder.png",
+      "is_active": false,
+      "created": "2026-01-15T00:00:00Z",
+      "modified": "2026-01-15T00:00:00Z"
+    }
+  }
+]

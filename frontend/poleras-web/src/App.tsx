@@ -1,18 +1,21 @@
-import { useState } from 'react';
+import { useState, Suspense, lazy } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { useCatalog } from './controllers/catalogoUse';
 import { TshirtCard } from './views/components/TshirtCard/TshirtCard';
-import { TshirtDetalle } from './views/components/TsirtDetalle/TshirtDetalle.tsx';
+import { TshirtDetalle } from './views/components/TsirtDetalle/TshirtDetalle'; // Corregido el .tsx del import
 import { CartDrawer } from './views/components/CartDrawer/CartDrawer';
 import type { Tshirt } from './models/types';
 import './views/styles/App.css';
 
-function App() {
+const LoginScreen = lazy(() => import('./views/components/Login/Login').then(module => ({ default: module.Login })));
+
+function CatalogoScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const { categories, selectedCategoryId, tshirts, loading, error, selectCategory } = useCatalog(searchQuery);
   const [selectedTshirt, setSelectedTshirt] = useState<Tshirt | null>(null);
   const [cart, setCart] = useState<{ tshirt: Tshirt; size: string; color: string; quantity: number }[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
-  // La búsqueda y el filtrado se realizan en el backend con Elasticsearch
   const filteredTshirts = tshirts;
 
   const handlePersonalizeClick = () => {
@@ -31,13 +34,10 @@ function App() {
       }
       return [...prevCart, { tshirt, size, color, quantity: 1 }];
     });
-    setSelectedTshirt(null); // Cierra el modal de detalles
-    setIsCartOpen(true); // Abre automáticamente el carrito lateral
+    setSelectedTshirt(null);
+    setIsCartOpen(true);
   };
 
-  const [isCartOpen, setIsCartOpen] = useState(false);
-
-  // Mostrar la barra lateral del carrito de compras
   const handleViewCart = () => {
     setIsCartOpen(true);
   };
@@ -66,7 +66,6 @@ function App() {
 
   return (
     <div className="app-container">
-      {/* 1. ENCABEZADO (HEADER) */}
       <header className="header">
         <div className="header__brand">
           <h1 className="header__title">Poleras<span>BO.</span></h1>
@@ -84,10 +83,11 @@ function App() {
         </div>
 
         <div className="header__actions">
-          <button className="header__btn header__btn--login" title="Iniciar Sesión">
+          <Link to="/login" className="header__btn header__btn--login" title="Iniciar Sesión" style={{ textDecoration: 'none' }}>
             <span className="header__btn-icon">👤</span>
             <span className="header__btn-text">Ingresar</span>
-          </button>
+          </Link>
+
           <button className="header__btn header__btn--cart" title="Ver Carrito" onClick={handleViewCart}>
             <span className="header__btn-icon">🛒</span>
             <span className="header__cart-badge">
@@ -97,7 +97,6 @@ function App() {
         </div>
       </header>
 
-      {/* 2. BANNER INFORMATIVO (HERO SECTION) */}
       <section className="hero">
         <div className="hero__content">
           <div className="hero__panel">
@@ -112,7 +111,6 @@ function App() {
         </div>
       </section>
 
-      {/* 3. BARRA DE CATEGORÍAS */}
       <section className="categories-section">
         <h3 className="section-title">Nuestras Colecciones</h3>
         <div className="categories-bar">
@@ -134,7 +132,6 @@ function App() {
         </div>
       </section>
 
-      {/* 4. SECCIÓN DE POLERAS (LISTADO DE TARJETAS) */}
       <main className="catalog-section">
         {loading && (
           <div className="catalog-status">
@@ -158,7 +155,6 @@ function App() {
         {!loading && !error && filteredTshirts.length > 0 && (
           <div className="catalog-grid">
             {filteredTshirts.map((tshirt) => {
-              // Obtenemos el nombre de la categoría del listado principal
               const category = categories.find((c) => c.id === tshirt.categoryid);
               const categoryName = category ? category.name : 'Polera';
 
@@ -179,14 +175,12 @@ function App() {
         <p>&copy; 2026 PolerasBO - Proyecto Final Aplicaciones Web. Todos los derechos reservados.</p>
       </footer>
 
-      {/* 5. MODAL DE DETALLE (REACT COMPONENT) */}
       <TshirtDetalle
         tshirt={selectedTshirt}
         onClose={() => setSelectedTshirt(null)}
         onAddToCart={handleAddToCart}
       />
 
-      {/* 6. CARRITO DESLIZABLE (CART DRAWER) */}
       <CartDrawer
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
@@ -196,6 +190,25 @@ function App() {
         onClearCart={handleClearCart}
       />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      {/* Suspense atrapa los componentes con Lazy Load mientras se descargan */}
+      <Suspense fallback={
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+          <h2>Cargando interfaz...</h2>
+        </div>
+      }>
+        <Routes>
+          <Route path="/" element={<CatalogoScreen />} />
+          <Route path="/login" element={<LoginScreen />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
   );
 }
 
