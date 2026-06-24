@@ -3,13 +3,11 @@ from django.db import models
 from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
 
-
 class UUIDMixin(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     class Meta:
         abstract = True
-
 
 class TimeStampedMixin(models.Model):
     created = models.DateTimeField(auto_now_add=True)
@@ -18,20 +16,19 @@ class TimeStampedMixin(models.Model):
     class Meta:
         abstract = True
 
-
 class Category(UUIDMixin, TimeStampedMixin):
     name = models.CharField(_('name'), max_length=100, unique=True)
     slug = models.SlugField(_('slug'), max_length=100, unique=True)
     is_active = models.BooleanField(_('is active'), default=True)
 
     class Meta:
+        managed = False
         db_table = "catalog\".\"categories"
         verbose_name = _('Categoría')
         verbose_name_plural = _('Categorías')
 
     def __str__(self):
         return self.name
-
 
 class TShirt(UUIDMixin, TimeStampedMixin):
     category = models.ForeignKey(
@@ -52,13 +49,13 @@ class TShirt(UUIDMixin, TimeStampedMixin):
     is_active = models.BooleanField(_('is active'), default=True)
 
     class Meta:
+        managed = False
         db_table = "catalog\".\"t_shirts"
         verbose_name = _('Polera')
         verbose_name_plural = _('Poleras')
 
     def __str__(self):
         return self.name
-
 
 class TShirtImage(UUIDMixin, TimeStampedMixin):
     t_shirt = models.ForeignKey(
@@ -71,13 +68,13 @@ class TShirtImage(UUIDMixin, TimeStampedMixin):
     is_primary = models.BooleanField(_('is primary'), default=False)
 
     class Meta:
+        managed = False
         db_table = "catalog\".\"t_shirt_images"
         verbose_name = _('Imagen')
         verbose_name_plural = _('Imágenes')
 
     def __str__(self):
         return f'Imagen de {self.t_shirt.name}'
-
 
 class SizeChoices(models.TextChoices):
     XS  = 'XS',  'XS'
@@ -86,7 +83,6 @@ class SizeChoices(models.TextChoices):
     L   = 'L',   'L'
     XL  = 'XL',  'XL'
     XXL = 'XXL', 'XXL'
-
 
 class TShirtSize(UUIDMixin, TimeStampedMixin):
     t_shirt = models.ForeignKey(
@@ -103,6 +99,7 @@ class TShirtSize(UUIDMixin, TimeStampedMixin):
     is_available = models.BooleanField(_('is available'), default=True)
 
     class Meta:
+        managed = False
         db_table = "catalog\".\"t_shirt_sizes"
         verbose_name = _('Talla')
         verbose_name_plural = _('Tallas')
@@ -111,13 +108,13 @@ class TShirtSize(UUIDMixin, TimeStampedMixin):
     def __str__(self):
         return f'{self.t_shirt.name} — {self.size_label}'
 
-
 class PresetDesign(UUIDMixin, TimeStampedMixin):
     name = models.CharField(_('name'), max_length=255)
     image = models.ImageField(_('image'), upload_to='designs/')
     is_active = models.BooleanField(_('is active'), default=True)
 
     class Meta:
+        managed = False
         db_table = "catalog\".\"preset_designs"
         verbose_name = _('Diseño prediseñado')
         verbose_name_plural = _('Diseños prediseñados')

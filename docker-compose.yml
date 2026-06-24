@@ -60,5 +60,6 @@ services:
 
 volumes:
   postgres_data:
+  media_files:
   elasticsearch_data:
 

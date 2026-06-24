@@ -1,6 +1,8 @@
 #!/bin/sh
 set -e
 
+python manage.py makemigrations catalog
+
 python manage.py migrate --noinput
 
 python manage.py shell -c "
