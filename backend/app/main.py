@@ -4,6 +4,7 @@ from shared.init_db import init_db
 from modules.auth.router import router as auth_router
 from modules.negocio.router import router as negocio_router
 from modules.catalog.router import router as catalog_router
+from modules.admin.router import router as admin_router
 
 app = FastAPI(
     title="Plataforma de personalización de poleras",
@@ -19,6 +20,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(admin_router)
 app.include_router(auth_router)
 app.include_router(negocio_router)
 app.include_router(catalog_router)

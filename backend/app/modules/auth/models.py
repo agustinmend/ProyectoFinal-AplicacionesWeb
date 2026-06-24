@@ -1,8 +1,13 @@
 import uuid
-from sqlalchemy import Column, String, Boolean, DateTime, text
+from sqlalchemy import Column, String, Boolean, DateTime, text, Enum as SQLEnum
 from sqlalchemy.dialects.postgresql import UUID
 from shared.database import Base
+import enum
 
+class UserRole(str, enum.Enum):
+    CLIENTE = "cliente"
+    MODERADOR = "moderador"
+    ADMINISTRADOR = "administrador"
 
 class User(Base):
     __tablename__ = 'users'
@@ -12,7 +17,7 @@ class User(Base):
     email         = Column(String(255), unique=True, nullable=False)
     password_hash = Column(String(255), nullable=True)
     full_name     = Column(String(255), nullable=False)
-    role          = Column(String(20), nullable=False, default='cliente')
+    role          = Column(SQLEnum(UserRole), nullable=False, default=UserRole.CLIENTE)
     is_active     = Column(Boolean, nullable=False, default=True)
     created       = Column(DateTime(timezone=True), server_default=text('now()'))
     modified      = Column(DateTime(timezone=True), server_default=text('now()'))
