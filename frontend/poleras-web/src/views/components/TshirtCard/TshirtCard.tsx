@@ -40,7 +40,13 @@ export function TshirtCard({ tshirt, categoryName, onClick }: TshirtCardProps) {
                     <h3 className="tshirt-card__title">{tshirt.name}</h3>
                     <span className="tshirt-card__price">{formatPrice(tshirt.base_price)}</span>
                 </div>
-                <span className="tshirt-card__category">{categoryName}</span>
+                <div className="tshirt-card__details-row">
+                    <span className="tshirt-card__category">{categoryName}</span>
+                    <div className="tshirt-card__colors">
+                        <span className="tshirt-card__color-dot tshirt-card__color-dot--white" title="Blanco"></span>
+                        <span className="tshirt-card__color-dot tshirt-card__color-dot--black" title="Negro"></span>
+                    </div>
+                </div>
             </div>
         </article>
     );

@@ -19,10 +19,10 @@
 
 .tshirt-card__image-container {
     width: 100%;
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 3 / 4; /* Modificado: Tarjeta más alta para ver más detalle */
     background-color: #f6f6f6;
     position: relative;
-    border-bottom: 1px solid #111111;
+    border-bottom: 1px solid #e1e1e1;
 }
 
 .tshirt-card__image {
@@ -63,7 +63,15 @@
     white-space: nowrap;
 }
 
-/* Fila inferior: Categoría debajo del título */
+/* Fila inferior: Categoría y Círculos de color */
+.tshirt-card__details-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 4px;
+}
+
 .tshirt-card__category {
     font-size: 11px;
     text-transform: uppercase;
@@ -71,6 +79,29 @@
     font-weight: 500;
     letter-spacing: 0.5px;
     text-align: left;
+}
+
+.tshirt-card__colors {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.tshirt-card__color-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.tshirt-card__color-dot--white {
+    background-color: #ffffff;
+    border: 1px solid #111111;
+}
+
+.tshirt-card__color-dot--black {
+    background-color: #000000;
+    border: 1px solid #000000;
 }
 
 .tshirt-card--inactive {

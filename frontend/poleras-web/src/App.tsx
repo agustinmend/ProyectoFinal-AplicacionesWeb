@@ -1,11 +1,15 @@
 import { useState } from 'react';
 import { useCatalog } from './controllers/catalogoUse';
 import { TshirtCard } from './views/components/TshirtCard/TshirtCard';
+import { TshirtDetalle } from './views/components/TsirtDetalle/TshirtDetalle';
+import type { Tshirt } from './models/types';
 import './views/styles/App.css';
 
 function App() {
   const { categories, selectedCategoryId, tshirts, loading, error, selectCategory } = useCatalog();
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedTshirt, setSelectedTshirt] = useState<Tshirt | null>(null);
+  const [cart, setCart] = useState<{ tshirt: Tshirt; size: string; color: string; quantity: number }[]>([]);
 
   // Filtrado de poleras por texto de búsqueda (cliente)
   const filteredTshirts = tshirts.filter((tshirt) =>
@@ -16,12 +20,39 @@ function App() {
     alert('¡Próximamente! Redirigiendo al customizador de poleras...');
   };
 
+  const handleAddToCart = (tshirt: Tshirt, size: string, color: string) => {
+    setCart((prevCart) => {
+      const existingIndex = prevCart.findIndex(
+        (item) => item.tshirt.id === tshirt.id && item.size === size && item.color === color
+      );
+      if (existingIndex > -1) {
+        const newCart = [...prevCart];
+        newCart[existingIndex].quantity += 1;
+        return newCart;
+      }
+      return [...prevCart, { tshirt, size, color, quantity: 1 }];
+    });
+    alert(`¡Agregado al carrito: ${tshirt.name} (Talla: ${size}, Color: ${color})!`);
+  };
+
+  // Mostrar los productos agregados en una alerta al hacer clic en el carrito
+  const handleViewCart = () => {
+    if (cart.length === 0) {
+      alert('Tu carrito está vacío.');
+      return;
+    }
+    const cartSummary = cart
+      .map((item) => `- ${item.tshirt.name} (Talla: ${item.size}, Color: ${item.color}) x${item.quantity} — BOB ${item.tshirt.base_price}`)
+      .join('\n');
+    alert(`Productos en tu carrito:\n\n${cartSummary}`);
+  };
+
   return (
     <div className="app-container">
       {/* 1. ENCABEZADO (HEADER) */}
       <header className="header">
         <div className="header__brand">
-          <h1 className="header__title">Poleras<span>BO</span></h1>
+          <h1 className="header__title">Poleras<span>BO.</span></h1>
         </div>
 
         <div className="header__search-container">
@@ -40,9 +71,11 @@ function App() {
             <span className="header__btn-icon">👤</span>
             <span className="header__btn-text">Ingresar</span>
           </button>
-          <button className="header__btn header__btn--cart" title="Carrito de Compras">
+          <button className="header__btn header__btn--cart" title="Ver Carrito" onClick={handleViewCart}>
             <span className="header__btn-icon">🛒</span>
-            <span className="header__cart-badge">0</span>
+            <span className="header__cart-badge">
+              {cart.reduce((sum, item) => sum + item.quantity, 0)}
+            </span>
           </button>
         </div>
       </header>
@@ -117,7 +150,7 @@ function App() {
                   key={tshirt.id}
                   tshirt={tshirt}
                   categoryName={categoryName}
-                  onClick={() => console.log('Seleccionaste:', tshirt.name)}
+                  onClick={() => setSelectedTshirt(tshirt)}
                 />
               );
             })}
@@ -128,6 +161,13 @@ function App() {
       <footer className="footer">
         <p>&copy; 2026 PolerasBO - Proyecto Final Aplicaciones Web. Todos los derechos reservados.</p>
       </footer>
+
+      {/* 5. MODAL DE DETALLE (REACT COMPONENT) */}
+      <TshirtDetalle
+        tshirt={selectedTshirt}
+        onClose={() => setSelectedTshirt(null)}
+        onAddToCart={handleAddToCart}
+      />
     </div>
   );
 }
