@@ -4,7 +4,9 @@ from sqlalchemy.orm import Session
 from shared.database import get_db
 from .schemas import RegisterRequest, LoginRequest, RefreshRequest, TokenResponse, UserResponse
 from . import service
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
+security = HTTPBearer()
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
@@ -42,11 +44,14 @@ def refresh(data: RefreshRequest, db: Session = Depends(get_db)):
 
 
 @router.get("/me", response_model=UserResponse)
-def me(db: Session = Depends(get_db), token: str = Depends(service.decode_access_token)):
+def me(
+    db: Session = Depends(get_db),
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+):
     from sqlalchemy import select
     from .models import User
     try:
-        payload = service.decode_access_token(token)
+        payload = service.decode_access_token(credentials.credentials)
         user = db.execute(
             select(User).where(User.id == payload["sub"])
         ).scalar_one_or_none()
@@ -54,4 +59,7 @@ def me(db: Session = Depends(get_db), token: str = Depends(service.decode_access
             raise HTTPException(status_code=404, detail="Usuario no encontrado")
         return user
     except Exception:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token inválido"
+        )
