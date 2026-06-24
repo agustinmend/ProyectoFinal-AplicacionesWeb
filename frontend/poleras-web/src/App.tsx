@@ -2,20 +2,26 @@ import { useState, Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { useCatalog } from './controllers/catalogoUse';
 import { TshirtCard } from './views/components/TshirtCard/TshirtCard';
-import { TshirtDetalle } from './views/components/TsirtDetalle/TshirtDetalle'; // Corregido el .tsx del import
+import { TshirtDetalle } from './views/components/TsirtDetalle/TshirtDetalle.tsx';
 import { CartDrawer } from './views/components/CartDrawer/CartDrawer';
-import type { Tshirt } from './models/types';
+import { useAuth } from './context/AuthContext';
+import type { Tshirt } from './models/types'; // Importación estricta de tipo para evitar errores de compilación con verbatimModuleSyntax
 import './views/styles/App.css';
 
+// Code Splitting obligatorio por ruta utilizando React.lazy + Suspense para optimizar el peso de los chunks
 const LoginScreen = lazy(() => import('./views/components/Login/Login').then(module => ({ default: module.Login })));
 const RegisterScreen = lazy(() => import('./views/components/Register/Register').then(module => ({ default: module.Register })));
 
+// Componente contenedor del flujo del catálogo principal
 function CatalogoScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const { categories, selectedCategoryId, tshirts, loading, error, selectCategory } = useCatalog(searchQuery);
   const [selectedTshirt, setSelectedTshirt] = useState<Tshirt | null>(null);
   const [cart, setCart] = useState<{ tshirt: Tshirt; size: string; color: string; quantity: number }[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+
+  // Consumo del estado global de autenticación requerido
+  const { user, isAuthenticated, logout } = useAuth();
 
   const filteredTshirts = tshirts;
 
@@ -67,6 +73,7 @@ function CatalogoScreen() {
 
   return (
     <div className="app-container">
+      {/* 1. ENCABEZADO (HEADER) */}
       <header className="header">
         <div className="header__brand">
           <h1 className="header__title">Poleras<span>BO.</span></h1>
@@ -84,10 +91,28 @@ function CatalogoScreen() {
         </div>
 
         <div className="header__actions">
-          <Link to="/login" className="header__btn header__btn--login" title="Iniciar Sesión" style={{ textDecoration: 'none' }}>
-            <span className="header__btn-icon">👤</span>
-            <span className="header__btn-text">Ingresar</span>
-          </Link>
+          {/* Control reactivo del Header según el estado de sesión para diferenciar flujos visuales */}
+          {isAuthenticated && user ? (
+            <div className="header__user-menu" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <span className="header__user-name" style={{ fontWeight: 600, color: '#111827' }}>
+                {user.full_name}
+              </span>
+              {/* Si el rol es administrador, se expone el enlace al panel operativo */}
+              {user.role === 'administrador' && (
+                <Link to="/admin" className="header__btn header__btn--admin" style={{ textDecoration: 'none' }}>
+                  Panel Admin
+                </Link>
+              )}
+              <button onClick={logout} className="header__btn header__btn--logout" title="Cerrar Sesión">
+                Salir
+              </button>
+            </div>
+          ) : (
+            <Link to="/login" className="header__btn header__btn--login" title="Iniciar Sesión" style={{ textDecoration: 'none' }}>
+              <span className="header__btn-icon">👤</span>
+              <span className="header__btn-text">Ingresar</span>
+            </Link>
+          )}
 
           <button className="header__btn header__btn--cart" title="Ver Carrito" onClick={handleViewCart}>
             <span className="header__btn-icon">🛒</span>
@@ -98,6 +123,7 @@ function CatalogoScreen() {
         </div>
       </header>
 
+      {/* 2. BANNER INFORMATIVO (HERO SECTION) */}
       <section className="hero">
         <div className="hero__content">
           <div className="hero__panel">
@@ -112,6 +138,7 @@ function CatalogoScreen() {
         </div>
       </section>
 
+      {/* 3. BARRA DE CATEGORÍAS */}
       <section className="categories-section">
         <h3 className="section-title">Nuestras Colecciones</h3>
         <div className="categories-bar">
@@ -133,6 +160,7 @@ function CatalogoScreen() {
         </div>
       </section>
 
+      {/* 4. SECCIÓN DE POLERAS (LISTADO DE TARJETAS) */}
       <main className="catalog-section">
         {loading && (
           <div className="catalog-status">
@@ -194,20 +222,32 @@ function CatalogoScreen() {
   );
 }
 
+// 2. Componente raíz encargado de orquestar el sistema de rutas de la SPA
 function App() {
   return (
     <BrowserRouter>
-      {/* Suspense atrapa los componentes con Lazy Load mientras se descargan */}
+      {/* Suspense intercepta las promesas de las pantallas cargadas asíncronamente con lazy */}
       <Suspense fallback={
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-          <h2>Cargando interfaz...</h2>
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', fontFamily: 'sans-serif', gap: '1rem' }}>
+          <div className="spinner"></div>
+          <p style={{ fontWeight: 500, color: '#4b5563' }}>Cargando aplicación...</p>
         </div>
       }>
         <Routes>
           <Route path="/" element={<CatalogoScreen />} />
           <Route path="/login" element={<LoginScreen />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
           <Route path="/registro" element={<RegisterScreen />} />
+          
+          {/* Ruta del Panel Administrativo integrado internamente dentro de la SPA */}
+          <Route path="/admin" element={
+            <div style={{ padding: '3rem', fontFamily: 'sans-serif', maxWidth: '800px', margin: '0 auto' }}>
+              <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Módulo de Administración</h1>
+              <p style={{ color: '#4b5563', marginBottom: '2rem' }}>CRUD operativo y gestión del catálogo principal.</p>
+              <Link to="/" style={{ color: '#000', fontWeight: 700, textDecoration: 'underline' }}>Volver al catálogo público</Link>
+            </div>
+          } />
+          
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
     </BrowserRouter>
