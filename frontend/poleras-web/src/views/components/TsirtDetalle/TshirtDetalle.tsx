@@ -17,15 +17,6 @@ export function TshirtDetalle({ tshirt, isFavorite, onToggleFavorite, onClose, o
   const [baseTshirts, setBaseTshirts] = useState<Tshirt[]>([]);
   const [selectedTshirtId, setSelectedTshirtId] = useState<string>('');
 
-  const [designSize, setDesignSize] = useState<number>(100); // 30 to 200 %
-  const [designX, setDesignX] = useState<number>(0);         // -50 to 50 %
-  const [designY, setDesignY] = useState<number>(0);         // -50 to 50 %
-  const [isImageLoaded, setIsImageLoaded] = useState<boolean>(false);
-
-  useEffect(() => {
-    setIsImageLoaded(false);
-  }, [tshirt?.image_url]);
-
   useEffect(() => {
     const cs = new CatalogoServicio();
     cs.getBaseTshirts()
@@ -81,7 +72,7 @@ export function TshirtDetalle({ tshirt, isFavorite, onToggleFavorite, onClose, o
       id: `custom-${designId}-${activeBaseTshirt.id}`,
       categoryid: activeBaseTshirt.categoryid,
       name: `${activeBaseTshirt.name} con estampado ${designName}`,
-      description: `Estampado: ${designName}. Material: 'Algodón'}. Ajustes - Tamaño: ${designSize}%, X: ${designX}%, Y: ${designY}%.`,
+      description: `Estampado: ${designName}. Material: ${activeBaseTshirt.material || 'Algodón'}.`,
       base_price: activeBaseTshirt.base_price,
       is_active: true,
       image_url: tshirt.image_url
@@ -104,29 +95,13 @@ export function TshirtDetalle({ tshirt, isFavorite, onToggleFavorite, onClose, o
             src={tshirtTemplateSrc}
             alt={`Polera base ${selectedColor}`}
           />
-          <div className={`tshirt-details-modal__design-area ${isImageLoaded ? 'tshirt-details-modal__design-area--hidden-border' : ''}`}>
-            {!isImageLoaded && <span className="tshirt-details-modal__design-area-label">Área de Diseño</span>}
-            {tshirt.image_url && (
-              <img
-                className="tshirt-details-modal__design-overlay"
-                src={tshirt.image_url}
-                alt={tshirt.name}
-                onLoad={() => setIsImageLoaded(true)}
-                onError={() => setIsImageLoaded(false)}
-                style={{
-                  position: 'absolute',
-                  width: `${designSize}%`,
-                  height: `${designSize}%`,
-                  left: `calc(50% + ${designX}%)`,
-                  top: `calc(50% + ${designY}%)`,
-                  transform: 'translate(-50%, -50%)',
-                  maxWidth: 'none',
-                  maxHeight: 'none',
-                  display: isImageLoaded ? 'block' : 'none'
-                }}
-              />
-            )}
-          </div>
+          {tshirt.image_url && (
+            <img
+              className="tshirt-details-modal__design-overlay"
+              src={tshirt.image_url}
+              alt={tshirt.name}
+            />
+          )}
         </div>
 
         <div className="tshirt-details-modal__info">
@@ -192,52 +167,7 @@ export function TshirtDetalle({ tshirt, isFavorite, onToggleFavorite, onClose, o
             </div>
           </div>
 
-          {/* Ajustar Estampado */}
-          <div className="tshirt-details-modal__section tshirt-details-modal__metrics-section">
-            <span className="tshirt-details-modal__section-label">Ajustar Estampado</span>
 
-            <div className="tshirt-details-modal__metric-control">
-              <div className="tshirt-details-modal__metric-info">
-                <span>Tamaño: {designSize}%</span>
-              </div>
-              <input
-                type="range"
-                className="tshirt-details-modal__range"
-                min="30"
-                max="200"
-                value={designSize}
-                onChange={(e) => setDesignSize(parseInt(e.target.value))}
-              />
-            </div>
-
-            <div className="tshirt-details-modal__metric-control">
-              <div className="tshirt-details-modal__metric-info">
-                <span>Posición Horizontal (X): {designX > 0 ? `+${designX}` : designX}%</span>
-              </div>
-              <input
-                type="range"
-                className="tshirt-details-modal__range"
-                min="-50"
-                max="50"
-                value={designX}
-                onChange={(e) => setDesignX(parseInt(e.target.value))}
-              />
-            </div>
-
-            <div className="tshirt-details-modal__metric-control">
-              <div className="tshirt-details-modal__metric-info">
-                <span>Posición Vertical (Y): {designY > 0 ? `+${designY}` : designY}%</span>
-              </div>
-              <input
-                type="range"
-                className="tshirt-details-modal__range"
-                min="-50"
-                max="50"
-                value={designY}
-                onChange={(e) => setDesignY(parseInt(e.target.value))}
-              />
-            </div>
-          </div>
 
           <div className="tshirt-details-modal__actions">
             <button
