@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import type { Category, Tshirt } from '../models/types';
 import { CatalogoServicio } from '../models/catalogoServicio';
 
-export function useCatalog(searchQuery: string) {
+export function useCatalog(searchQuery: string, isAuthenticated: boolean) {
     const [categories, setCategories] = useState<Category[]>([]);
     const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
     const [debouncedSearch, setDebouncedSearch] = useState<string>('');
@@ -24,16 +24,20 @@ export function useCatalog(searchQuery: string) {
             });
     }, []);
 
-    // 1.5. Cargar los favoritos al inicio
+    // 1.5. Cargar los favoritos al inicio o cuando cambie la sesión
     useEffect(() => {
+        if (!isAuthenticated) {
+            setFavoriteIds([]);
+            return;
+        }
         catalogoServicio.getFavorites()
             .then((data) => {
-                setFavoriteIds(data.map(item => item.id));
+                setFavoriteIds(data.map(item => item.id.split('__')[0]));
             })
             .catch((err) => {
                 console.error('Error loading initial favorites:', err);
             });
-    }, []);
+    }, [isAuthenticated]);
 
     // 2. Debounce del query de búsqueda (300ms)
     useEffect(() => {
@@ -65,7 +69,7 @@ export function useCatalog(searchQuery: string) {
     // 3.5. Si estamos en la categoría favoritos y se remueve un elemento localmente, quitarlo de la lista inmediatamente
     useEffect(() => {
         if (selectedCategoryId === 'favoritos') {
-            setTshirts(prev => prev.filter(t => favoriteIds.includes(t.id)));
+            setTshirts(prev => prev.filter(t => favoriteIds.includes(t.id.split('__')[0])));
         }
     }, [favoriteIds, selectedCategoryId]);
 
@@ -76,20 +80,21 @@ export function useCatalog(searchQuery: string) {
 
     // 5. Alternar favorito (optimista)
     const toggleFavorite = async (tshirtId: string) => {
-        const isFav = favoriteIds.includes(tshirtId);
+        const designId = tshirtId.includes('__') ? tshirtId.split('__')[0] : tshirtId;
+        const isFav = favoriteIds.includes(designId);
         if (isFav) {
-            setFavoriteIds(prev => prev.filter(id => id !== tshirtId));
+            setFavoriteIds(prev => prev.filter(id => id !== designId));
         } else {
-            setFavoriteIds(prev => [...prev, tshirtId]);
+            setFavoriteIds(prev => [...prev, designId]);
         }
         
         const success = await catalogoServicio.toggleFavorite(tshirtId);
         if (success !== !isFav) {
             // Sincronizar si el estado real difiere de la estimación optimista
             if (success) {
-                setFavoriteIds(prev => prev.includes(tshirtId) ? prev : [...prev, tshirtId]);
+                setFavoriteIds(prev => prev.includes(designId) ? prev : [...prev, designId]);
             } else {
-                setFavoriteIds(prev => prev.filter(id => id !== tshirtId));
+                setFavoriteIds(prev => prev.filter(id => id !== designId));
             }
         }
     };

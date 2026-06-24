@@ -24,14 +24,7 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  transition: background-color 0.3s;
-}
-
-@media (prefers-color-scheme: dark) {
-  .header {
-    background: rgba(22, 23, 29, 0.8);
   }
-}
 
 .header__brand span {
   color: var(--accent);
