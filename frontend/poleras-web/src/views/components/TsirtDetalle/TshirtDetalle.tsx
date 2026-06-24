@@ -4,11 +4,13 @@ import './TshirtDetalle.css';
 
 interface TshirtDetalleProps {
   tshirt: Tshirt | null;
+  isFavorite: boolean;
+  onToggleFavorite: (tshirtId: string) => void;
   onClose: () => void;
   onAddToCart: (tshirt: Tshirt, size: string, color: string) => void;
 }
 
-export function TshirtDetalle({ tshirt, onClose, onAddToCart }: TshirtDetalleProps) {
+export function TshirtDetalle({ tshirt, isFavorite, onToggleFavorite, onClose, onAddToCart }: TshirtDetalleProps) {
   const [selectedSize, setSelectedSize] = useState<string>('M');
   const [selectedColor, setSelectedColor] = useState<string>('Blanco'); // Blanco o Negro
 
@@ -91,12 +93,23 @@ export function TshirtDetalle({ tshirt, onClose, onAddToCart }: TshirtDetallePro
             </div>
           </div>
 
-          <button
-            className="tshirt-details-modal__add-btn"
-            onClick={() => onAddToCart(tshirt, selectedSize, selectedColor)}
-          >
-            Agregar al Carrito
-          </button>
+          <div className="tshirt-details-modal__actions">
+            <button
+              className="tshirt-details-modal__add-btn"
+              onClick={() => onAddToCart(tshirt, selectedSize, selectedColor)}
+            >
+              Agregar al Carrito
+            </button>
+            <button
+              className={`tshirt-details-modal__fav-btn ${
+                isFavorite ? 'tshirt-details-modal__fav-btn--active' : ''
+              }`}
+              onClick={() => onToggleFavorite(tshirt.id)}
+              title={isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos'}
+            >
+              {isFavorite ? '❤️' : '🤍'}
+            </button>
+          </div>
         </div>
       </div>
     </div>

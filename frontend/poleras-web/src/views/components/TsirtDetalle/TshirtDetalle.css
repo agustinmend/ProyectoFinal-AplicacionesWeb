@@ -200,7 +200,14 @@
   color: #ffffff;
 }
 
-/* Botón Agregar al Carrito */
+/* Acciones del Modal (Agregar al Carrito + Favoritos) */
+.tshirt-details-modal__actions {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  align-items: center;
+}
+
 .tshirt-details-modal__add-btn {
   background: #111111;
   color: #ffffff;
@@ -211,13 +218,49 @@
   cursor: pointer;
   border-radius: 4px;
   transition: all 0.2s;
-  width: 100%;
+  flex: 1;
   text-align: center;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
 }
 
 .tshirt-details-modal__add-btn:hover {
   background: #ffffff;
   color: #111111;
+}
+
+.tshirt-details-modal__fav-btn {
+  background: #ffffff;
+  color: #111111;
+  border: 1px solid #111111;
+  width: 44px;
+  height: 44px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.tshirt-details-modal__fav-btn:hover {
+  background: #f5f5f5;
+  transform: scale(1.05);
+}
+
+.tshirt-details-modal__fav-btn--active {
+  background: #fff0f0;
+  border-color: #ff3b30;
+}
+
+.tshirt-details-modal__fav-btn--active:hover {
+  background: #ffe5e5;
 }
 
 /* Animaciones */

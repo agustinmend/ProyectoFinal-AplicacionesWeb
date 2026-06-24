@@ -1,6 +1,8 @@
 from sqlalchemy import text
 from shared.database import engine
 from modules.auth.models import User, OAuthAccount, RefreshToken
+from modules.catalog.models import Category, TShirt, TShirtImage
+from modules.ugc.models import Favorite
 
 
 def init_db():

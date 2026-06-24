@@ -93,6 +93,9 @@ export class CatalogoServicio implements ICatalogo {
     }
 
     async getTshirts(categoriaId?: string, search?: string): Promise<Tshirt[]> {
+        if (categoriaId === 'favoritos') {
+            return this.getFavorites(search);
+        }
         try {
             const url = new URL(`${this.baseUrl}/tshirts`);
             if (categoriaId) {
@@ -127,5 +130,38 @@ export class CatalogoServicio implements ICatalogo {
 
     async getDiseñosPredeterminados(): Promise<PresetDesing[]> {
         return [];
+    }
+
+    async toggleFavorite(tshirtId: string): Promise<boolean> {
+        try {
+            const response = await fetch(`${this.baseUrl}/favorites/toggle/${tshirtId}`, {
+                method: 'POST',
+            });
+            if (!response.ok) {
+                throw new Error('Error al alternar favorito');
+            }
+            const data = await response.json();
+            return data.favorited;
+        } catch (e) {
+            console.error('Error toggling favorite on backend:', e);
+            return false;
+        }
+    }
+
+    async getFavorites(search?: string): Promise<Tshirt[]> {
+        try {
+            const url = new URL(`${this.baseUrl}/favorites`);
+            if (search && search.trim()) {
+                url.searchParams.append('search', search.trim());
+            }
+            const response = await fetch(url.toString());
+            if (!response.ok) {
+                throw new Error('Error al obtener favoritos');
+            }
+            return await response.json();
+        } catch (e) {
+            console.error('Error fetching favorites from backend, using mocks:', e);
+            return [];
+        }
     }
 }

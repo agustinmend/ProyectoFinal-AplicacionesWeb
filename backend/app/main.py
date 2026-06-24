@@ -29,10 +29,32 @@ def on_startup():
     # Inicializar esquemas y tablas
     init_db()
     
-    # Sincronizar catálogo con Elasticsearch
     from shared.database import SessionLocal
-    from modules.catalog.service import sync_catalog_to_es
     db = SessionLocal()
+    
+    # Crear usuario invitado por defecto si no existe
+    try:
+        from modules.auth.models import User
+        import uuid
+        guest_id = uuid.UUID("00000000-0000-0000-0000-000000000000")
+        guest_user = db.query(User).filter(User.id == guest_id).first()
+        if not guest_user:
+            guest_user = User(
+                id=guest_id,
+                email="guest@poleras.bo",
+                password_hash=None,
+                full_name="Cliente Invitado",
+                role="cliente",
+                is_active=True
+            )
+            db.add(guest_user)
+            db.commit()
+            print("Usuario invitado creado exitosamente.")
+    except Exception as e:
+        print(f"Error al crear usuario invitado: {e}")
+    
+    # Sincronizar catálogo con Elasticsearch
+    from modules.catalog.service import sync_catalog_to_es
     try:
         sync_catalog_to_es(db)
     finally:

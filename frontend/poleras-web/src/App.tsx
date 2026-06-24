@@ -8,7 +8,7 @@ import './views/styles/App.css';
 
 function App() {
   const [searchQuery, setSearchQuery] = useState('');
-  const { categories, selectedCategoryId, tshirts, loading, error, selectCategory } = useCatalog(searchQuery);
+  const { categories, selectedCategoryId, tshirts, favoriteIds, loading, error, selectCategory, toggleFavorite } = useCatalog(searchQuery);
   const [selectedTshirt, setSelectedTshirt] = useState<Tshirt | null>(null);
   const [cart, setCart] = useState<{ tshirt: Tshirt; size: string; color: string; quantity: number }[]>([]);
 
@@ -131,6 +131,12 @@ function App() {
               {category.name}
             </button>
           ))}
+          <button
+            className={`category-pill ${selectedCategoryId === 'favoritos' ? 'category-pill--active' : ''}`}
+            onClick={() => selectCategory('favoritos')}
+          >
+            Favoritos ❤️
+          </button>
         </div>
       </section>
 
@@ -182,6 +188,8 @@ function App() {
       {/* 5. MODAL DE DETALLE (REACT COMPONENT) */}
       <TshirtDetalle
         tshirt={selectedTshirt}
+        isFavorite={selectedTshirt ? favoriteIds.includes(selectedTshirt.id) : false}
+        onToggleFavorite={toggleFavorite}
         onClose={() => setSelectedTshirt(null)}
         onAddToCart={handleAddToCart}
       />
