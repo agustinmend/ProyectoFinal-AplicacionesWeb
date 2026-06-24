@@ -30,6 +30,19 @@ services:
       postgres:
         condition: service_healthy
 
+  app:
+      build: ./backend/app
+      container_name: poleras_app
+      restart: unless-stopped
+      env_file: .env
+      ports:
+        - "8001:8001"
+      volumes:
+        - ./backend/app:/app
+      depends_on:
+        postgres:
+          condition: service_healthy
+
 volumes:
   postgres_data:
   media_files:
