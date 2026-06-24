@@ -1,26 +1,24 @@
-import { useState, Suspense, lazy } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
+import { useState } from 'react';
 import { useCatalog } from './controllers/catalogoUse';
 import { TshirtCard } from './views/components/TshirtCard/TshirtCard';
-import { TshirtDetalle } from './views/components/TsirtDetalle/TshirtDetalle'; // Corregido el .tsx del import
+import { TshirtDetalle } from './views/components/TsirtDetalle/TshirtDetalle.tsx';
 import { CartDrawer } from './views/components/CartDrawer/CartDrawer';
+import { Customizer } from './views/components/Customizer/Customizer';
 import type { Tshirt } from './models/types';
 import './views/styles/App.css';
 
-const LoginScreen = lazy(() => import('./views/components/Login/Login').then(module => ({ default: module.Login })));
-const RegisterScreen = lazy(() => import('./views/components/Register/Register').then(module => ({ default: module.Register })));
-
-function CatalogoScreen() {
+function App() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [view, setView] = useState<'catalog' | 'customizer'>('catalog');
   const { categories, selectedCategoryId, tshirts, favoriteIds, loading, error, selectCategory, toggleFavorite } = useCatalog(searchQuery);
   const [selectedTshirt, setSelectedTshirt] = useState<Tshirt | null>(null);
   const [cart, setCart] = useState<{ tshirt: Tshirt; size: string; color: string; quantity: number }[]>([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
 
+  // La búsqueda y el filtrado se realizan en el backend con Elasticsearch
   const filteredTshirts = tshirts;
 
   const handlePersonalizeClick = () => {
-    alert('¡Próximamente! Redirigiendo al customizador de poleras...');
+    setView('customizer');
   };
 
   const handleAddToCart = (tshirt: Tshirt, size: string, color: string) => {
@@ -35,10 +33,13 @@ function CatalogoScreen() {
       }
       return [...prevCart, { tshirt, size, color, quantity: 1 }];
     });
-    setSelectedTshirt(null);
-    setIsCartOpen(true);
+    setSelectedTshirt(null); // Cierra el modal de detalles
+    setIsCartOpen(true); // Abre automáticamente el carrito lateral
   };
 
+  const [isCartOpen, setIsCartOpen] = useState(false);
+
+  // Mostrar la barra lateral del carrito de compras
   const handleViewCart = () => {
     setIsCartOpen(true);
   };
@@ -67,8 +68,9 @@ function CatalogoScreen() {
 
   return (
     <div className="app-container">
+      {/* 1. ENCABEZADO (HEADER) */}
       <header className="header">
-        <div className="header__brand">
+        <div className="header__brand" onClick={() => setView('catalog')} style={{ cursor: 'pointer' }}>
           <h1 className="header__title">Poleras<span>BO.</span></h1>
         </div>
 
@@ -84,11 +86,10 @@ function CatalogoScreen() {
         </div>
 
         <div className="header__actions">
-          <Link to="/login" className="header__btn header__btn--login" title="Iniciar Sesión" style={{ textDecoration: 'none' }}>
+          <button className="header__btn header__btn--login" title="Iniciar Sesión">
             <span className="header__btn-icon">👤</span>
             <span className="header__btn-text">Ingresar</span>
-          </Link>
-
+          </button>
           <button className="header__btn header__btn--cart" title="Ver Carrito" onClick={handleViewCart}>
             <span className="header__btn-icon">🛒</span>
             <span className="header__cart-badge">
@@ -98,98 +99,114 @@ function CatalogoScreen() {
         </div>
       </header>
 
-      <section className="hero">
-        <div className="hero__content">
-          <div className="hero__panel">
-            <h2 className="hero__title">Diseña tu propio estilo</h2>
-            <p className="hero__description">
-              Elige entre nuestras poleras base de algodón premium, selecciona tu color preferido y añade tus diseños favoritos de manera 100% personalizada.
-            </p>
-          </div>
-          <button className="hero__cta-btn" onClick={handlePersonalizeClick}>
-            Personalizar Polera 🎨
-          </button>
-        </div>
-      </section>
+      {view === 'catalog' ? (
+        <>
+          {/* 2. BANNER INFORMATIVO (HERO SECTION) */}
+          <section className="hero">
+            <div className="hero__content">
+              <div className="hero__panel">
+                <h2 className="hero__title">Diseña tu propio estilo</h2>
+                <p className="hero__description">
+                  Elige entre nuestras poleras base de algodón premium, selecciona tu color preferido y añade tus diseños favoritos de manera 100% personalizada.
+                </p>
+              </div>
+              <button className="hero__cta-btn" onClick={handlePersonalizeClick}>
+                Personalizar Polera 🎨
+              </button>
+            </div>
+          </section>
 
-      <section className="categories-section">
-        <h3 className="section-title">Nuestras Colecciones</h3>
-        <div className="categories-bar">
-          <button
-            className={`category-pill ${selectedCategoryId === '' ? 'category-pill--active' : ''}`}
-            onClick={() => selectCategory('')}
-          >
-            Todos
-          </button>
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              className={`category-pill ${selectedCategoryId === category.id ? 'category-pill--active' : ''}`}
-              onClick={() => selectCategory(category.id)}
-            >
-              {category.name}
-            </button>
-          ))}
-          <button
-            className={`category-pill ${selectedCategoryId === 'favoritos' ? 'category-pill--active' : ''}`}
-            onClick={() => selectCategory('favoritos')}
-          >
-            Favoritos ❤️
-          </button>
-        </div>
-      </section>
+          {/* 3. BARRA DE CATEGORÍAS */}
+          <section className="categories-section">
+            <h3 className="section-title">Nuestras Colecciones</h3>
+            <div className="categories-bar">
+              <button
+                className={`category-pill ${selectedCategoryId === '' ? 'category-pill--active' : ''}`}
+                onClick={() => selectCategory('')}
+              >
+                Todos
+              </button>
+              {categories.map((category) => (
+                <button
+                  key={category.id}
+                  className={`category-pill ${selectedCategoryId === category.id ? 'category-pill--active' : ''}`}
+                  onClick={() => selectCategory(category.id)}
+                >
+                  {category.name}
+                </button>
+              ))}
+              <button
+                className={`category-pill ${selectedCategoryId === 'favoritos' ? 'category-pill--active' : ''}`}
+                onClick={() => selectCategory('favoritos')}
+              >
+                Favoritos ❤️
+              </button>
+            </div>
+          </section>
 
-      <main className="catalog-section">
-        {loading && (
-          <div className="catalog-status">
-            <div className="spinner"></div>
-            <p>Cargando catálogo de productos...</p>
-          </div>
-        )}
+          {/* 4. SECCIÓN DE POLERAS (LISTADO DE TARJETAS) */}
+          <main className="catalog-section">
+            {loading && (
+              <div className="catalog-status">
+                <div className="spinner"></div>
+                <p>Cargando catálogo de productos...</p>
+              </div>
+            )}
 
-        {error && !loading && (
-          <div className="catalog-status catalog-status--error">
-            <p>⚠️ {error}</p>
-          </div>
-        )}
+            {error && !loading && (
+              <div className="catalog-status catalog-status--error">
+                <p>⚠️ {error}</p>
+              </div>
+            )}
 
-        {!loading && !error && filteredTshirts.length === 0 && (
-          <div className="catalog-status">
-            <p>No se encontraron poleras en esta categoría.</p>
-          </div>
-        )}
+            {!loading && !error && filteredTshirts.length === 0 && (
+              <div className="catalog-status">
+                <p>No se encontraron poleras en esta categoría.</p>
+              </div>
+            )}
 
-        {!loading && !error && filteredTshirts.length > 0 && (
-          <div className="catalog-grid">
-            {filteredTshirts.map((tshirt) => {
-              const category = categories.find((c) => c.id === tshirt.categoryid);
-              const categoryName = category ? category.name : 'Polera';
+            {!loading && !error && filteredTshirts.length > 0 && (
+              <div className="catalog-grid">
+                {filteredTshirts.map((tshirt) => {
+                  // Obtenemos el nombre de la categoría del listado principal
+                  const category = categories.find((c) => c.id === tshirt.categoryid);
+                  const categoryName = category ? category.name : 'Polera';
 
-              return (
-                <TshirtCard
-                  key={tshirt.id}
-                  tshirt={tshirt}
-                  categoryName={categoryName}
-                  onClick={() => setSelectedTshirt(tshirt)}
-                />
-              );
-            })}
-          </div>
-        )}
-      </main>
+                  return (
+                    <TshirtCard
+                      key={tshirt.id}
+                      tshirt={tshirt}
+                      categoryName={categoryName}
+                      onClick={() => setSelectedTshirt(tshirt)}
+                    />
+                  );
+                })}
+              </div>
+            )}
+          </main>
+        </>
+      ) : (
+        <Customizer
+          tshirts={tshirts}
+          onAddToCart={handleAddToCart}
+          onClose={() => setView('catalog')}
+        />
+      )}
 
       <footer className="footer">
         <p>&copy; 2026 PolerasBO - Proyecto Final Aplicaciones Web. Todos los derechos reservados.</p>
       </footer>
 
+      {/* 5. MODAL DE DETALLE (REACT COMPONENT) */}
       <TshirtDetalle
         tshirt={selectedTshirt}
-        isFavorite={selectedTshirt ? favoriteIds.includes(selectedTshirt.id) : false}
+        isFavorite={selectedTshirt ? favoriteIds.includes(selectedTshirt.id.split('__')[0]) : false}
         onToggleFavorite={toggleFavorite}
         onClose={() => setSelectedTshirt(null)}
         onAddToCart={handleAddToCart}
       />
 
+      {/* 6. CARRITO DESLIZABLE (CART DRAWER) */}
       <CartDrawer
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
@@ -199,26 +216,6 @@ function CatalogoScreen() {
         onClearCart={handleClearCart}
       />
     </div>
-  );
-}
-
-function App() {
-  return (
-    <BrowserRouter>
-      {/* Suspense atrapa los componentes con Lazy Load mientras se descargan */}
-      <Suspense fallback={
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-          <h2>Cargando interfaz...</h2>
-        </div>
-      }>
-        <Routes>
-          <Route path="/" element={<CatalogoScreen />} />
-          <Route path="/login" element={<LoginScreen />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-          <Route path="/registro" element={<RegisterScreen />} />
-        </Routes>
-      </Suspense>
-    </BrowserRouter>
   );
 }
 

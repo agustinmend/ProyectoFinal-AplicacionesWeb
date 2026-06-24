@@ -1,0 +1,408 @@
+/* ==========================================
+   CREA TU POLERA - CUSTOMIZER (B&W STYLES)
+   ========================================== */
+.customizer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  animation: fadeInCustomizer 0.3s ease-out;
+}
+
+.customizer-header-row {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 32px;
+  text-align: left;
+}
+
+@media (min-width: 768px) {
+  .customizer-header-row {
+    flex-direction: row;
+    align-items: center;
+    gap: 32px;
+  }
+}
+
+.customizer-back-btn {
+  background: transparent;
+  color: #111111;
+  border: 1px solid #111111;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+  align-self: flex-start;
+}
+
+.customizer-back-btn:hover {
+  background: #111111;
+  color: #ffffff;
+}
+
+.customizer-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.customizer-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #111111;
+  margin: 0;
+}
+
+.customizer-subtitle {
+  font-size: 14px;
+  color: #666666;
+  margin: 0;
+}
+
+/* Grilla principal */
+.customizer-main-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+}
+
+@media (min-width: 768px) {
+  .customizer-main-grid {
+    grid-template-columns: 1.1fr 0.9fr;
+    align-items: start;
+  }
+}
+
+/* Panel de vista previa (Canvas) */
+.customizer-preview-panel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f9f9f9;
+  border: 1px solid #e1e1e1;
+  border-radius: 12px;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.customizer-canvas-container {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  aspect-ratio: 1 / 1;
+  background: #f6f6f6;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.customizer-canvas-tshirt {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Caja de diseño sobrepuesta */
+.customizer-design-area {
+  position: absolute;
+  top: 30%;
+  left: 28%;
+  width: 44%;
+  height: 40%;
+  border: 2px dashed #0088cc;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  box-sizing: border-box;
+  background: rgba(0, 136, 204, 0.03);
+}
+
+.customizer-design-area-label {
+  font-size: 9px;
+  color: #0088cc;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 2px 6px;
+  border-radius: 2px;
+  border: 1px solid rgba(0, 136, 204, 0.2);
+  pointer-events: none;
+}
+
+.customizer-design-overlay {
+  max-width: 80%;
+  max-height: 80%;
+  object-fit: contain;
+  z-index: 10;
+  animation: scaleInOverlay 0.2s ease-out;
+  pointer-events: none;
+}
+
+/* Panel de Opciones */
+.customizer-options-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  background: #ffffff;
+  border: 1px solid #111111;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+}
+
+.customizer-option-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+}
+
+.customizer-section-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.customizer-section-num {
+  font-weight: 800;
+  color: #111111;
+}
+
+.customizer-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #111111;
+  letter-spacing: 0.5px;
+}
+
+.customizer-section-value {
+  font-size: 13px;
+  color: #666666;
+  font-weight: 500;
+}
+
+/* Círculos de color */
+.customizer-colors-row {
+  display: flex;
+  gap: 12px;
+}
+
+.customizer-color-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #cccccc;
+  cursor: pointer;
+  padding: 0;
+  outline: none;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.customizer-color-circle:hover {
+  transform: scale(1.1);
+}
+
+.customizer-color-circle--white {
+  background-color: #ffffff;
+  border: 1px solid #111111;
+}
+
+.customizer-color-circle--black {
+  background-color: #111111;
+  border: 1px solid #111111;
+}
+
+.customizer-color-circle--active {
+  transform: scale(1.1);
+  outline: 2px solid #000000;
+  outline-offset: 2px;
+}
+
+/* Botones de tallas */
+.customizer-sizes-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.customizer-size-btn {
+  padding: 10px 16px;
+  border: 1px solid #111111;
+  background: #ffffff;
+  color: #111111;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.customizer-size-btn:hover {
+  background: #f5f5f5;
+}
+
+.customizer-size-btn--active {
+  background: #111111;
+  color: #ffffff;
+}
+
+/* Inputs y Selects */
+.customizer-select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #111111;
+  border-radius: 4px;
+  background-color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  color: #111111;
+  outline: none;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.customizer-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 12px;
+  border: 1px solid #111111;
+  border-radius: 4px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #111111;
+  resize: vertical;
+  outline: none;
+  box-sizing: border-box;
+}
+
+/* Zona de carga */
+.customizer-upload-box {
+  width: 100%;
+  border: 2px dashed #cccccc;
+  border-radius: 6px;
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+  box-sizing: border-box;
+}
+
+.customizer-upload-box:hover {
+  border-color: #111111;
+  background-color: #fafafa;
+}
+
+.customizer-upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.customizer-upload-icon {
+  font-size: 24px;
+}
+
+.customizer-upload-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: #444444;
+}
+
+.customizer-upload-clear-btn {
+  background: transparent;
+  color: #ff3b30;
+  border: 1px solid #ff3b30;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+  align-self: flex-start;
+}
+
+.customizer-upload-clear-btn:hover {
+  background: #fff0f0;
+}
+
+/* Alerta de Error */
+.customizer-error-alert {
+  background-color: #fff0f0;
+  border: 1px solid #ff3b30;
+  color: #ff3b30;
+  padding: 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+}
+
+/* Footer de precio y checkout */
+.customizer-checkout-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-top: 1px solid #e1e1e1;
+  padding-top: 24px;
+  margin-top: 12px;
+}
+
+.customizer-price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.customizer-price-label {
+  font-size: 14px;
+  color: #666666;
+  font-weight: 500;
+}
+
+.customizer-price-value {
+  font-size: 26px;
+  font-weight: 800;
+  color: #111111;
+}
+
+.customizer-submit-btn {
+  background: #111111;
+  color: #ffffff;
+  border: 1px solid #111111;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.customizer-submit-btn:hover {
+  background: #ffffff;
+  color: #111111;
+}
+
+/* Animaciones */
+@keyframes fadeInCustomizer {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleInOverlay {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}

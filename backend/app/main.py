@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+import os
 from shared.init_db import init_db
 from modules.auth.router import router as auth_router
 from modules.negocio.router import router as negocio_router
@@ -10,6 +12,10 @@ app = FastAPI(
     title="Plataforma de personalización de poleras",
     version="1.0.0",
 )
+
+# Asegurar directorios estáticos para subida de imágenes de usuarios
+os.makedirs("/app/static/custom_designs", exist_ok=True)
+app.mount("/static", StaticFiles(directory="/app/static"), name="static")
 
 # Configurar middleware de CORS
 app.add_middleware(

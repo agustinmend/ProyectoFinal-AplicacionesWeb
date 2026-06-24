@@ -43,3 +43,14 @@ class TShirtImage(Base):
     modified = Column(DateTime(timezone=True), server_default=text("now()"))
 
     t_shirt = relationship("TShirt", backref="images")
+
+class PresetDesign(Base):
+    __tablename__ = "preset_designs"
+    __table_args__ = {"schema": "catalog"}
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    name = Column(String(255), nullable=False)
+    image = Column(String(100), nullable=False)
+    is_active = Column(Boolean, nullable=False, default=True)
+    created = Column(DateTime(timezone=True), server_default=text("now()"))
+    modified = Column(DateTime(timezone=True), server_default=text("now()"))

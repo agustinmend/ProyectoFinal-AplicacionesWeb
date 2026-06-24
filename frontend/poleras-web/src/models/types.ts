@@ -25,7 +25,7 @@ export interface PresetDesing {
     id: string;
     name: string;
     is_active: boolean;
-    image: string;
+    image_url: string;
 }
 
 export interface RegisterRequest {

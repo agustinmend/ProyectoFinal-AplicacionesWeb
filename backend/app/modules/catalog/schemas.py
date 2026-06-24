@@ -47,12 +47,38 @@ class TShirtResponse(BaseModel):
 
             return {
                 "id": data.id,
-                "category_id": data.category_id,
+                "categoryid": data.category_id,
                 "name": data.name,
                 "description": data.description or "",
                 "material": data.material or "",
-                "base_price": str(data.base_price),
+                "base_price": f"{float(data.base_price) / 100.0:.2f}" if float(data.base_price) >= 1000 else f"{float(data.base_price):.2f}",
                 "is_active": data.is_active,
                 "image_url": image_url
+            }
+        return data
+
+class PresetDesignResponse(BaseModel):
+    id: UUID
+    name: str
+    image_url: str
+    is_active: bool
+
+    class Config:
+        from_attributes = True
+
+    @model_validator(mode="before")
+    @classmethod
+    def convert_fields(cls, data):
+        if not isinstance(data, dict) and hasattr(data, "image"):
+            if data.image:
+                image_url = f"http://localhost:8000/media/{data.image}"
+            else:
+                image_url = "http://localhost:8000/media/designs/placeholder.png"
+
+            return {
+                "id": data.id,
+                "name": data.name,
+                "image_url": image_url,
+                "is_active": data.is_active
             }
         return data

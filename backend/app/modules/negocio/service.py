@@ -12,10 +12,13 @@ def generate_whatsapp_quotation(data: CotizacionRequest) -> dict:
     for item in data.items:
         item_total = item.price * item.quantity
         total += item_total
-        lines.append(
+        item_line = (
             f"• *{item.quantity}x {item.name}* (Talla: {item.size}, Color: {item.color}) "
             f"— BOB {item.price:.2f} c/u (Subtotal: BOB {item_total:.2f})"
         )
+        if item.image_url:
+            item_line += f"\n  - Imagen del diseño: {item.image_url}"
+        lines.append(item_line)
         
     lines.append(f"\n*Total aproximado:* BOB {total:.2f}")
     lines.append("\nQuedo atento para coordinar el pago y el envío. ¡Muchas gracias!")

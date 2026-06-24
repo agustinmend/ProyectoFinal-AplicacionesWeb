@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
+import os
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from uuid import UUID
 from shared.database import get_db
-from .schemas import CategoryResponse, TShirtResponse
-from .models import Category
+from .schemas import CategoryResponse, TShirtResponse, PresetDesignResponse
+from .models import Category, PresetDesign
 from . import service
 
 router = APIRouter(prefix="/catalog", tags=["Catalog"])
@@ -56,5 +57,50 @@ def get_favorites_endpoint(
     user_id: UUID = Depends(get_current_user_id)
 ):
     from modules.ugc import service as ugc_service
-    tshirts = ugc_service.get_user_favorites(db, user_id, search=search)
-    return tshirts
+    from .schemas import PresetDesignResponse
+    designs = ugc_service.get_user_favorites(db, user_id, search=search)
+    result = []
+    for d in designs:
+        d_data = PresetDesignResponse.model_validate(d)
+        result.append({
+            "id": d_data.id,
+            "categoryid": UUID("11111111-0000-0000-0000-000000000001"),
+            "name": d_data.name,
+            "description": "Diseño exclusivo estampado de alta calidad.",
+            "material": "Algodón",
+            "base_price": "99.00",
+            "is_active": d_data.is_active,
+            "image_url": d_data.image_url
+        })
+    return result
+
+@router.get("/preset-designs", response_model=List[PresetDesignResponse])
+def get_preset_designs(db: Session = Depends(get_db)):
+    from sqlalchemy import select
+    stmt = select(PresetDesign).where(PresetDesign.is_active == True)
+    return db.execute(stmt).scalars().all()
+
+@router.post("/upload-design")
+def upload_design(
+    file: UploadFile = File(...)
+):
+    import shutil
+    import uuid
+    # Validar formato
+    ext = os.path.splitext(file.filename)[1].lower()
+    if ext not in [".png", ".jpg", ".jpeg"]:
+        raise HTTPException(status_code=400, detail="Formato no válido. Debe ser PNG o JPG.")
+    
+    # Directorio estático
+    static_dir = "/app/static/custom_designs"
+    os.makedirs(static_dir, exist_ok=True)
+    
+    # Nombre de archivo único
+    filename = f"{uuid.uuid4()}{ext}"
+    filepath = os.path.join(static_dir, filename)
+    
+    # Guardar
+    with open(filepath, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+        
+    return {"image_url": f"http://localhost:8001/static/custom_designs/{filename}"}

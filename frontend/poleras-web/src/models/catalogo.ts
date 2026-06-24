@@ -7,5 +7,7 @@ export interface ICatalogo {
     getDiseñosPredeterminados(): Promise<PresetDesing[]>;
     toggleFavorite(tshirtId: string): Promise<boolean>;
     getFavorites(search?: string): Promise<Tshirt[]>;
+    getBaseTshirts(categoriaId?: string, search?: string): Promise<Tshirt[]>;
+    uploadDesign(file: File): Promise<string>;
 }
 

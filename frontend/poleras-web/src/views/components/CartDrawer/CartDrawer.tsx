@@ -55,6 +55,7 @@ export function CartDrawer({
         color: item.color,
         quantity: item.quantity,
         price: parseFloat(item.tshirt.base_price),
+        image_url: item.tshirt.image_url || null,
       }));
 
       // Llamar al endpoint del backend
@@ -140,6 +141,18 @@ export function CartDrawer({
                       <p className="cart-item__meta">
                         Talla: {item.size} | Color: {item.color}
                       </p>
+                      {item.tshirt.image_url && (
+                        <a 
+                          href={item.tshirt.image_url} 
+                          download={`${item.tshirt.name.replace(/\s+/g, '_')}.png`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="cart-item__download-link"
+                          style={{ fontSize: '11px', color: 'var(--accent)', textDecoration: 'underline', cursor: 'pointer', display: 'block', marginTop: '4px' }}
+                        >
+                          Descargar Imagen del Diseño 📥
+                        </a>
+                      )}
                       
                       <div className="cart-item__actions-row">
                         {/* Selector de cantidad */}

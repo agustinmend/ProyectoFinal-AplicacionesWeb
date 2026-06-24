@@ -8,6 +8,8 @@ class CartItemInput(BaseModel):
     color: str
     quantity: int
     price: float
+    image_url: str | None = None
+
 
 class CotizacionRequest(BaseModel):
     items: List[CartItemInput]
