@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useCatalog } from './controllers/catalogoUse';
 import { TshirtCard } from './views/components/TshirtCard/TshirtCard';
-import { TshirtDetalle } from './views/components/TsirtDetalle/TshirtDetalle';
+import { TshirtDetalle } from './views/components/TsirtDetalle/TshirtDetalle.tsx';
+import { CartDrawer } from './views/components/CartDrawer/CartDrawer';
 import type { Tshirt } from './models/types';
 import './views/styles/App.css';
 
@@ -32,19 +33,37 @@ function App() {
       }
       return [...prevCart, { tshirt, size, color, quantity: 1 }];
     });
-    alert(`¡Agregado al carrito: ${tshirt.name} (Talla: ${size}, Color: ${color})!`);
+    setSelectedTshirt(null); // Cierra el modal de detalles
+    setIsCartOpen(true); // Abre automáticamente el carrito lateral
   };
 
-  // Mostrar los productos agregados en una alerta al hacer clic en el carrito
+  const [isCartOpen, setIsCartOpen] = useState(false);
+
+  // Mostrar la barra lateral del carrito de compras
   const handleViewCart = () => {
-    if (cart.length === 0) {
-      alert('Tu carrito está vacío.');
-      return;
-    }
-    const cartSummary = cart
-      .map((item) => `- ${item.tshirt.name} (Talla: ${item.size}, Color: ${item.color}) x${item.quantity} — BOB ${item.tshirt.base_price}`)
-      .join('\n');
-    alert(`Productos en tu carrito:\n\n${cartSummary}`);
+    setIsCartOpen(true);
+  };
+
+  const handleUpdateQuantity = (tshirtId: string, size: string, color: string, newQty: number) => {
+    setCart((prevCart) =>
+      prevCart.map((item) =>
+        item.tshirt.id === tshirtId && item.size === size && item.color === color
+          ? { ...item, quantity: newQty }
+          : item
+      )
+    );
+  };
+
+  const handleRemoveFromCart = (tshirtId: string, size: string, color: string) => {
+    setCart((prevCart) =>
+      prevCart.filter(
+        (item) => !(item.tshirt.id === tshirtId && item.size === size && item.color === color)
+      )
+    );
+  };
+
+  const handleClearCart = () => {
+    setCart([]);
   };
 
   return (
@@ -167,6 +186,16 @@ function App() {
         tshirt={selectedTshirt}
         onClose={() => setSelectedTshirt(null)}
         onAddToCart={handleAddToCart}
+      />
+
+      {/* 6. CARRITO DESLIZABLE (CART DRAWER) */}
+      <CartDrawer
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        cart={cart}
+        onUpdateQuantity={handleUpdateQuantity}
+        onRemove={handleRemoveFromCart}
+        onClearCart={handleClearCart}
       />
     </div>
   );

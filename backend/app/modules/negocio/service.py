@@ -1,0 +1,32 @@
+import os
+import urllib.parse
+from .schemas import CotizacionRequest
+
+def generate_whatsapp_quotation(data: CotizacionRequest) -> dict:
+    whatsapp_number = os.environ.get("WHATSAPP_NUMBER", "59162074399")
+    
+    # Construcción del mensaje
+    lines = ["¡Hola! Me gustaría realizar una cotización para las siguientes poleras:\n"]
+    
+    total = 0.0
+    for item in data.items:
+        item_total = item.price * item.quantity
+        total += item_total
+        lines.append(
+            f"• *{item.quantity}x {item.name}* (Talla: {item.size}, Color: {item.color}) "
+            f"— BOB {item.price:.2f} c/u (Subtotal: BOB {item_total:.2f})"
+        )
+        
+    lines.append(f"\n*Total aproximado:* BOB {total:.2f}")
+    lines.append("\nQuedo atento para coordinar el pago y el envío. ¡Muchas gracias!")
+    
+    message = "\n".join(lines)
+    
+    # Codificar mensaje para la URL
+    encoded_message = urllib.parse.quote(message)
+    whatsapp_url = f"https://wa.me/{whatsapp_number}?text={encoded_message}"
+    
+    return {
+        "whatsapp_url": whatsapp_url,
+        "formatted_message": message
+    }
