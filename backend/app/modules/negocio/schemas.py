@@ -9,6 +9,7 @@ class CartItemInput(BaseModel):
     quantity: int
     price: float
     image_url: str | None = None
+    description: str | None = None
 
 
 class CotizacionRequest(BaseModel):

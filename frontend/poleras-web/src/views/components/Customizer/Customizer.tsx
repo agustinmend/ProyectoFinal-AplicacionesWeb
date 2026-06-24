@@ -4,28 +4,35 @@ import { CatalogoServicio } from '../../../models/catalogoServicio';
 import './Customizer.css';
 
 interface CustomizerProps {
-    tshirts: Tshirt[];
     onAddToCart: (tshirt: Tshirt, size: string, color: string) => void;
     onClose: () => void;
 }
 
-export function Customizer({ tshirts, onAddToCart, onClose }: CustomizerProps) {
+export function Customizer({ onAddToCart, onClose }: CustomizerProps) {
     const [selectedColor, setSelectedColor] = useState<string>('Blanco');
     const [selectedSize, setSelectedSize] = useState<string>('M');
     const [selectedTshirtId, setSelectedTshirtId] = useState<string>('');
     const [selectedDesignId, setSelectedDesignId] = useState<string>('none');
-    
+
     // Diseños predeterminados del backend
     const [presetDesigns, setPresetDesigns] = useState<PresetDesing[]>([]);
-    
+
+    // Poleras base reales de la base de datos
+    const [baseTshirts, setBaseTshirts] = useState<Tshirt[]>([]);
+
     // Diseño subido por el usuario
     const [customImageFile, setCustomImageFile] = useState<File | null>(null);
     const [customImagePreview, setCustomImagePreview] = useState<string | null>(null);
     const [isUploading, setIsUploading] = useState<boolean>(false);
-    
+
     const [instructions, setInstructions] = useState<string>('');
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const [designSize, setDesignSize] = useState<number>(100); // 30 to 200 %
+    const [designX, setDesignX] = useState<number>(0);         // -50 to 50 %
+    const [designY, setDesignY] = useState<number>(0);         // -50 to 50 %
+    const [isImageLoaded, setIsImageLoaded] = useState<boolean>(false);
 
     // Cargar los diseños predeterminados y seleccionar el primer t-shirt por defecto
     useEffect(() => {
@@ -36,16 +43,21 @@ export function Customizer({ tshirts, onAddToCart, onClose }: CustomizerProps) {
             console.error('Error fetching preset designs:', err);
         });
 
-        if (tshirts && tshirts.length > 0) {
-            setSelectedTshirtId(tshirts[0].id);
-        }
-    }, [tshirts]);
+        cs.getBaseTshirts().then(data => {
+            setBaseTshirts(data);
+            if (data.length > 0) {
+                setSelectedTshirtId(data[0].id);
+            }
+        }).catch(err => {
+            console.error('Error fetching base tshirts in customizer:', err);
+        });
+    }, []);
 
-    const activeTshirt = tshirts.find(t => t.id === selectedTshirtId) || tshirts[0];
+    const activeTshirt = baseTshirts.find(t => t.id === selectedTshirtId) || baseTshirts[0];
 
     // URLs de plantillas de poleras
-    const whiteTshirtTemplate = "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&auto=format&fit=crop&q=80";
-    const blackTshirtTemplate = "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500&auto=format&fit=crop&q=80";
+    const whiteTshirtTemplate = "https://classicfella.com/cdn/shop/files/TShirt_White_Trans_0.5x_8537c1fa-10c5-4246-b7fb-55ff5b3a9eb1.png";
+    const blackTshirtTemplate = "https://dsrcv.com/cdn/shop/files/T-SHIRT-black_600x.jpg?v=1756292835";
 
     const tshirtTemplateSrc = selectedColor === 'Blanco' ? whiteTshirtTemplate : blackTshirtTemplate;
 
@@ -59,6 +71,10 @@ export function Customizer({ tshirts, onAddToCart, onClose }: CustomizerProps) {
     } else if (customImagePreview) {
         designOverlaySrc = customImagePreview;
     }
+
+    useEffect(() => {
+        setIsImageLoaded(false);
+    }, [designOverlaySrc]);
 
     // Manejar subida de archivo
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -80,7 +96,7 @@ export function Customizer({ tshirts, onAddToCart, onClose }: CustomizerProps) {
 
         setIsUploading(true);
         setCustomImageFile(file);
-        
+
         try {
             const cs = new CatalogoServicio();
             const serverUrl = await cs.uploadDesign(file);
@@ -137,7 +153,7 @@ export function Customizer({ tshirts, onAddToCart, onClose }: CustomizerProps) {
             id: `custom-${Math.random().toString(36).substr(2, 9)}`,
             categoryid: activeTshirt.categoryid,
             name: `${activeTshirt.name} (Personalizada: ${designName})`,
-            description: instructions.trim() ? `Instrucciones: ${instructions.trim()}` : `Diseño: ${designName}`,
+            description: `Diseño: ${designName}. Ajustes - Tamaño: ${designSize}%, X: ${designX}%, Y: ${designY}%.` + (instructions.trim() ? ` Instrucciones: ${instructions.trim()}` : ''),
             base_price: activeTshirt.base_price,
             is_active: true,
             image_url: selectedDesignId === 'none' ? (customImagePreview || '') : designOverlaySrc
@@ -173,19 +189,32 @@ export function Customizer({ tshirts, onAddToCart, onClose }: CustomizerProps) {
                 {/* PANEL IZQUIERDO: VISTA PREVIA */}
                 <div className="customizer-preview-panel">
                     <div className="customizer-canvas-container">
-                        <img 
-                            className="customizer-canvas-tshirt" 
-                            src={tshirtTemplateSrc} 
-                            alt={`Polera base ${selectedColor}`} 
+                        <img
+                            className="customizer-canvas-tshirt"
+                            src={tshirtTemplateSrc}
+                            alt={`Polera base ${selectedColor}`}
                         />
                         {/* Área de diseño sobrepuesta */}
-                        <div className="customizer-design-area">
-                            <span className="customizer-design-area-label">Área de Diseño</span>
+                        <div className={`customizer-design-area ${isImageLoaded ? 'customizer-design-area--hidden-border' : ''}`}>
+                            {!isImageLoaded && <span className="customizer-design-area-label">Área de Diseño</span>}
                             {designOverlaySrc && (
-                                <img 
-                                    className="customizer-design-overlay" 
-                                    src={designOverlaySrc} 
-                                    alt="Overlay de diseño" 
+                                <img
+                                    className="customizer-design-overlay"
+                                    src={designOverlaySrc}
+                                    alt="Overlay de diseño"
+                                    onLoad={() => setIsImageLoaded(true)}
+                                    onError={() => setIsImageLoaded(false)}
+                                    style={{
+                                        position: 'absolute',
+                                        width: `${designSize}%`,
+                                        height: `${designSize}%`,
+                                        left: `calc(50% + ${designX}%)`,
+                                        top: `calc(50% + ${designY}%)`,
+                                        transform: 'translate(-50%, -50%)',
+                                        maxWidth: 'none',
+                                        maxHeight: 'none',
+                                        display: isImageLoaded ? 'block' : 'none'
+                                    }}
                                 />
                             )}
                         </div>
@@ -240,12 +269,12 @@ export function Customizer({ tshirts, onAddToCart, onClose }: CustomizerProps) {
                             <span className="customizer-section-num">3.</span>
                             <span className="customizer-section-title">Selecciona el tipo de polera</span>
                         </div>
-                        <select 
+                        <select
                             className="customizer-select"
                             value={selectedTshirtId}
                             onChange={(e) => setSelectedTshirtId(e.target.value)}
                         >
-                            {tshirts.map(tshirt => (
+                            {baseTshirts.map(tshirt => (
                                 <option key={tshirt.id} value={tshirt.id}>
                                     {tshirt.name} ({formatPrice(tshirt.base_price)})
                                 </option>
@@ -259,7 +288,7 @@ export function Customizer({ tshirts, onAddToCart, onClose }: CustomizerProps) {
                             <span className="customizer-section-num">3.5</span>
                             <span className="customizer-section-title">Diseño predeterminado</span>
                         </div>
-                        <select 
+                        <select
                             className="customizer-select"
                             value={selectedDesignId}
                             onChange={handleDesignChange}
@@ -292,15 +321,15 @@ export function Customizer({ tshirts, onAddToCart, onClose }: CustomizerProps) {
                                 <div className="customizer-upload-content">
                                     <span className="customizer-upload-icon">{isUploading ? '⏳' : '📤'}</span>
                                     <span className="customizer-upload-text">
-                                        {isUploading 
-                                            ? 'Subiendo diseño al servidor...' 
+                                        {isUploading
+                                            ? 'Subiendo diseño al servidor...'
                                             : (customImageFile ? customImageFile.name : 'Subir Imagen (PNG/JPG)')}
                                     </span>
                                 </div>
                             </div>
                             {customImageFile && !isUploading && (
-                                <button 
-                                    className="customizer-upload-clear-btn" 
+                                <button
+                                    className="customizer-upload-clear-btn"
                                     onClick={() => {
                                         setCustomImageFile(null);
                                         setCustomImagePreview(null);
@@ -312,6 +341,55 @@ export function Customizer({ tshirts, onAddToCart, onClose }: CustomizerProps) {
                             )}
                         </div>
                     )}
+
+                    {/* Ajustes de Estampado */}
+                    <div className="customizer-option-section customizer-metrics-section">
+                        <div className="customizer-section-header">
+                            <span className="customizer-section-title">Ajustar Estampado</span>
+                        </div>
+                        
+                        <div className="customizer-metric-control">
+                            <div className="customizer-metric-info">
+                                <span>Tamaño: {designSize}%</span>
+                            </div>
+                            <input
+                                type="range"
+                                className="customizer-range"
+                                min="30"
+                                max="200"
+                                value={designSize}
+                                onChange={(e) => setDesignSize(parseInt(e.target.value))}
+                            />
+                        </div>
+
+                        <div className="customizer-metric-control">
+                            <div className="customizer-metric-info">
+                                <span>Posición Horizontal (X): {designX > 0 ? `+${designX}` : designX}%</span>
+                            </div>
+                            <input
+                                type="range"
+                                className="customizer-range"
+                                min="-50"
+                                max="50"
+                                value={designX}
+                                onChange={(e) => setDesignX(parseInt(e.target.value))}
+                            />
+                        </div>
+
+                        <div className="customizer-metric-control">
+                            <div className="customizer-metric-info">
+                                <span>Posición Vertical (Y): {designY > 0 ? `+${designY}` : designY}%</span>
+                            </div>
+                            <input
+                                type="range"
+                                className="customizer-range"
+                                min="-50"
+                                max="50"
+                                value={designY}
+                                onChange={(e) => setDesignY(parseInt(e.target.value))}
+                            />
+                        </div>
+                    </div>
 
                     {/* Instrucciones adicionales */}
                     <div className="customizer-option-section">

@@ -16,6 +16,8 @@ def generate_whatsapp_quotation(data: CotizacionRequest) -> dict:
             f"• *{item.quantity}x {item.name}* (Talla: {item.size}, Color: {item.color}) "
             f"— BOB {item.price:.2f} c/u (Subtotal: BOB {item_total:.2f})"
         )
+        if item.description:
+            item_line += f"\n  - Detalle: {item.description}"
         if item.image_url:
             item_line += f"\n  - Imagen del diseño: {item.image_url}"
         lines.append(item_line)

@@ -211,7 +211,6 @@ function CatalogoScreen() {
         </>
       ) : (
         <Customizer
-          tshirts={tshirts}
           onAddToCart={handleAddToCart}
           onClose={() => setView('catalog')}
         />

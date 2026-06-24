@@ -17,6 +17,15 @@ export function TshirtDetalle({ tshirt, isFavorite, onToggleFavorite, onClose, o
   const [baseTshirts, setBaseTshirts] = useState<Tshirt[]>([]);
   const [selectedTshirtId, setSelectedTshirtId] = useState<string>('');
 
+  const [designSize, setDesignSize] = useState<number>(100); // 30 to 200 %
+  const [designX, setDesignX] = useState<number>(0);         // -50 to 50 %
+  const [designY, setDesignY] = useState<number>(0);         // -50 to 50 %
+  const [isImageLoaded, setIsImageLoaded] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsImageLoaded(false);
+  }, [tshirt?.image_url]);
+
   useEffect(() => {
     const cs = new CatalogoServicio();
     cs.getBaseTshirts()
@@ -55,24 +64,24 @@ export function TshirtDetalle({ tshirt, isFavorite, onToggleFavorite, onClose, o
   ];
 
   // Plantillas de poleras base
-  const whiteTshirtTemplate = "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&auto=format&fit=crop&q=80";
-  const blackTshirtTemplate = "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500&auto=format&fit=crop&q=80";
+  const whiteTshirtTemplate = "https://classicfella.com/cdn/shop/files/TShirt_White_Trans_0.5x_8537c1fa-10c5-4246-b7fb-55ff5b3a9eb1.png";
+  const blackTshirtTemplate = "https://dsrcv.com/cdn/shop/files/T-SHIRT-black_600x.jpg?v=1756292835";
 
   const tshirtTemplateSrc = selectedColor === 'Blanco' ? whiteTshirtTemplate : blackTshirtTemplate;
 
   const handleAddToCart = () => {
     if (!activeBaseTshirt) return;
-    
+
     const designId = tshirt.id.split('__')[0];
-    const designName = tshirt.name.includes(' con estampado ') 
-      ? tshirt.name.split(' con estampado ')[1] 
+    const designName = tshirt.name.includes(' con estampado ')
+      ? tshirt.name.split(' con estampado ')[1]
       : tshirt.name;
 
     const cartProduct: Tshirt = {
       id: `custom-${designId}-${activeBaseTshirt.id}`,
       categoryid: activeBaseTshirt.categoryid,
       name: `${activeBaseTshirt.name} con estampado ${designName}`,
-      description: `Estampado: ${designName}. Material: ${activeBaseTshirt.material || 'Algodón'}.`,
+      description: `Estampado: ${designName}. Material: 'Algodón'}. Ajustes - Tamaño: ${designSize}%, X: ${designX}%, Y: ${designY}%.`,
       base_price: activeBaseTshirt.base_price,
       is_active: true,
       image_url: tshirt.image_url
@@ -95,13 +104,29 @@ export function TshirtDetalle({ tshirt, isFavorite, onToggleFavorite, onClose, o
             src={tshirtTemplateSrc}
             alt={`Polera base ${selectedColor}`}
           />
-          {tshirt.image_url && (
-            <img
-              className="tshirt-details-modal__design-overlay"
-              src={tshirt.image_url}
-              alt={tshirt.name}
-            />
-          )}
+          <div className={`tshirt-details-modal__design-area ${isImageLoaded ? 'tshirt-details-modal__design-area--hidden-border' : ''}`}>
+            {!isImageLoaded && <span className="tshirt-details-modal__design-area-label">Área de Diseño</span>}
+            {tshirt.image_url && (
+              <img
+                className="tshirt-details-modal__design-overlay"
+                src={tshirt.image_url}
+                alt={tshirt.name}
+                onLoad={() => setIsImageLoaded(true)}
+                onError={() => setIsImageLoaded(false)}
+                style={{
+                  position: 'absolute',
+                  width: `${designSize}%`,
+                  height: `${designSize}%`,
+                  left: `calc(50% + ${designX}%)`,
+                  top: `calc(50% + ${designY}%)`,
+                  transform: 'translate(-50%, -50%)',
+                  maxWidth: 'none',
+                  maxHeight: 'none',
+                  display: isImageLoaded ? 'block' : 'none'
+                }}
+              />
+            )}
+          </div>
         </div>
 
         <div className="tshirt-details-modal__info">
@@ -140,9 +165,8 @@ export function TshirtDetalle({ tshirt, isFavorite, onToggleFavorite, onClose, o
               {colors.map((color) => (
                 <button
                   key={color.name}
-                  className={`tshirt-details-modal__color-circle ${
-                    selectedColor === color.name ? 'tshirt-details-modal__color-circle--active' : ''
-                  }`}
+                  className={`tshirt-details-modal__color-circle ${selectedColor === color.name ? 'tshirt-details-modal__color-circle--active' : ''
+                    }`}
                   style={{ backgroundColor: color.value }}
                   onClick={() => setSelectedColor(color.name)}
                   title={color.name}
@@ -158,14 +182,60 @@ export function TshirtDetalle({ tshirt, isFavorite, onToggleFavorite, onClose, o
               {sizes.map((size) => (
                 <button
                   key={size}
-                  className={`tshirt-details-modal__size-btn ${
-                    selectedSize === size ? 'tshirt-details-modal__size-btn--active' : ''
-                  }`}
+                  className={`tshirt-details-modal__size-btn ${selectedSize === size ? 'tshirt-details-modal__size-btn--active' : ''
+                    }`}
                   onClick={() => setSelectedSize(size)}
                 >
                   {size}
                 </button>
               ))}
+            </div>
+          </div>
+
+          {/* Ajustar Estampado */}
+          <div className="tshirt-details-modal__section tshirt-details-modal__metrics-section">
+            <span className="tshirt-details-modal__section-label">Ajustar Estampado</span>
+
+            <div className="tshirt-details-modal__metric-control">
+              <div className="tshirt-details-modal__metric-info">
+                <span>Tamaño: {designSize}%</span>
+              </div>
+              <input
+                type="range"
+                className="tshirt-details-modal__range"
+                min="30"
+                max="200"
+                value={designSize}
+                onChange={(e) => setDesignSize(parseInt(e.target.value))}
+              />
+            </div>
+
+            <div className="tshirt-details-modal__metric-control">
+              <div className="tshirt-details-modal__metric-info">
+                <span>Posición Horizontal (X): {designX > 0 ? `+${designX}` : designX}%</span>
+              </div>
+              <input
+                type="range"
+                className="tshirt-details-modal__range"
+                min="-50"
+                max="50"
+                value={designX}
+                onChange={(e) => setDesignX(parseInt(e.target.value))}
+              />
+            </div>
+
+            <div className="tshirt-details-modal__metric-control">
+              <div className="tshirt-details-modal__metric-info">
+                <span>Posición Vertical (Y): {designY > 0 ? `+${designY}` : designY}%</span>
+              </div>
+              <input
+                type="range"
+                className="tshirt-details-modal__range"
+                min="-50"
+                max="50"
+                value={designY}
+                onChange={(e) => setDesignY(parseInt(e.target.value))}
+              />
             </div>
           </div>
 
@@ -177,9 +247,8 @@ export function TshirtDetalle({ tshirt, isFavorite, onToggleFavorite, onClose, o
               Agregar al Carrito
             </button>
             <button
-              className={`tshirt-details-modal__fav-btn ${
-                isFavorite ? 'tshirt-details-modal__fav-btn--active' : ''
-              }`}
+              className={`tshirt-details-modal__fav-btn ${isFavorite ? 'tshirt-details-modal__fav-btn--active' : ''
+                }`}
               onClick={() => onToggleFavorite(tshirt.id)}
               title={isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos'}
             >

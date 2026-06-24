@@ -56,6 +56,7 @@ export function CartDrawer({
         quantity: item.quantity,
         price: parseFloat(item.tshirt.base_price),
         image_url: item.tshirt.image_url || null,
+        description: item.tshirt.description || null,
       }));
 
       // Llamar al endpoint del backend
