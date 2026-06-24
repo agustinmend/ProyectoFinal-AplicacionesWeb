@@ -16,18 +16,29 @@ const RegisterScreen = lazy(() => import('./views/components/Register/Register')
 function CatalogoScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [view, setView] = useState<'catalog' | 'customizer'>('catalog');
-  const { categories, selectedCategoryId, tshirts, favoriteIds, loading, error, selectCategory, toggleFavorite } = useCatalog(searchQuery);
-  const [selectedTshirt, setSelectedTshirt] = useState<Tshirt | null>(null);
-  const [cart, setCart] = useState<{ tshirt: Tshirt; size: string; color: string; quantity: number }[]>([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
 
   // Consumo del estado global de autenticación requerido
   const { user, isAuthenticated, logout } = useAuth();
 
-  const filteredTshirts = tshirts;
+  const { categories, selectedCategoryId, tshirts, favoriteIds, loading, error, selectCategory, toggleFavorite } = useCatalog(searchQuery, isAuthenticated);
+  const [selectedTshirt, setSelectedTshirt] = useState<Tshirt | null>(null);
+  const [cart, setCart] = useState<{ tshirt: Tshirt; size: string; color: string; quantity: number }[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   const handlePersonalizeClick = () => {
+    if (!isAuthenticated) {
+      alert('Debes iniciar sesión para personalizar una polera.');
+      return;
+    }
     setView('customizer');
+  };
+
+  const handleToggleFavorite = (tshirtId: string) => {
+    if (!isAuthenticated) {
+      alert('Debes iniciar sesión para añadir a favoritos.');
+      return;
+    }
+    toggleFavorite(tshirtId);
   };
 
   const handleAddToCart = (tshirt: Tshirt, size: string, color: string) => {
@@ -162,7 +173,13 @@ function CatalogoScreen() {
               ))}
               <button
                 className={`category-pill ${selectedCategoryId === 'favoritos' ? 'category-pill--active' : ''}`}
-                onClick={() => selectCategory('favoritos')}
+                onClick={() => {
+                  if (!isAuthenticated) {
+                    alert('Debes iniciar sesión para ver tus favoritos.');
+                    return;
+                  }
+                  selectCategory('favoritos');
+                }}
               >
                 Favoritos ❤️
               </button>
@@ -184,15 +201,15 @@ function CatalogoScreen() {
               </div>
             )}
 
-            {!loading && !error && filteredTshirts.length === 0 && (
+            {!loading && !error && tshirts.length === 0 && (
               <div className="catalog-status">
                 <p>No se encontraron poleras en esta categoría.</p>
               </div>
             )}
 
-            {!loading && !error && filteredTshirts.length > 0 && (
+            {!loading && !error && tshirts.length > 0 && (
               <div className="catalog-grid">
-                {filteredTshirts.map((tshirt) => {
+                {tshirts.map((tshirt) => {
                   const category = categories.find((c) => c.id === tshirt.categoryid);
                   const categoryName = category ? category.name : 'Polera';
 
@@ -224,7 +241,7 @@ function CatalogoScreen() {
       <TshirtDetalle
         tshirt={selectedTshirt}
         isFavorite={selectedTshirt ? favoriteIds.includes(selectedTshirt.id.split('__')[0]) : false}
-        onToggleFavorite={toggleFavorite}
+        onToggleFavorite={handleToggleFavorite}
         onClose={() => setSelectedTshirt(null)}
         onAddToCart={handleAddToCart}
       />
@@ -255,7 +272,7 @@ function App() {
           <Route path="/" element={<CatalogoScreen />} />
           <Route path="/login" element={<LoginScreen />} />
           <Route path="/registro" element={<RegisterScreen />} />
-          
+
           {/* Ruta del Panel Administrativo integrado internamente dentro de la SPA */}
           <Route path="/admin" element={
             <div style={{ padding: '3rem', fontFamily: 'sans-serif', maxWidth: '800px', margin: '0 auto' }}>
@@ -264,7 +281,7 @@ function App() {
               <Link to="/" style={{ color: '#000', fontWeight: 700, textDecoration: 'underline' }}>Volver al catálogo público</Link>
             </div>
           } />
-          
+
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>

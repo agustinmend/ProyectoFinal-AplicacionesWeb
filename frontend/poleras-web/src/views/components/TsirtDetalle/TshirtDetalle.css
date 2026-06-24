@@ -286,9 +286,17 @@
   box-sizing: border-box;
 }
 
+.tshirt-details-modal__fav-btn svg {
+  transition: transform 0.2s ease, fill 0.2s ease, stroke 0.2s ease;
+}
+
 .tshirt-details-modal__fav-btn:hover {
   background: var(--code-bg);
   transform: scale(1.05);
+}
+
+.tshirt-details-modal__fav-btn:hover svg {
+  transform: scale(1.15);
 }
 
 .tshirt-details-modal__fav-btn--active {

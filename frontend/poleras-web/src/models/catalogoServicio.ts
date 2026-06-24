@@ -1,16 +1,12 @@
 import type { Category, PresetDesing, Tshirt, TshirtSize } from "./types";
 import { type ICatalogo } from "./catalogo";
+import { apiClient } from "./authServicio";
 
 export class CatalogoServicio implements ICatalogo {
-    private baseUrl = 'http://localhost:8001/catalog';
-
     async getCategorias(): Promise<Category[]> {
         try {
-            const response = await fetch(`${this.baseUrl}/categories`);
-            if (!response.ok) {
-                throw new Error('Error al obtener categorías');
-            }
-            return await response.json();
+            const response = await apiClient.get<Category[]>('/catalog/categories');
+            return response.data;
         } catch (e) {
             console.error('Error fetching categories from backend:', e);
             return [];
@@ -60,11 +56,8 @@ export class CatalogoServicio implements ICatalogo {
 
     async getDiseñosPredeterminados(): Promise<PresetDesing[]> {
         try {
-            const response = await fetch(`${this.baseUrl}/preset-designs`);
-            if (!response.ok) {
-                throw new Error('Error al obtener diseños predeterminados');
-            }
-            return await response.json();
+            const response = await apiClient.get<PresetDesing[]>('/catalog/preset-designs');
+            return response.data;
         } catch (e) {
             console.error('Error fetching preset designs from backend:', e);
             return [];
@@ -74,14 +67,8 @@ export class CatalogoServicio implements ICatalogo {
     async toggleFavorite(tshirtId: string): Promise<boolean> {
         try {
             const designId = tshirtId.includes('__') ? tshirtId.split('__')[0] : tshirtId;
-            const response = await fetch(`${this.baseUrl}/favorites/toggle/${designId}`, {
-                method: 'POST',
-            });
-            if (!response.ok) {
-                throw new Error('Error al alternar favorito');
-            }
-            const data = await response.json();
-            return data.favorited;
+            const response = await apiClient.post<{ favorited: boolean }>(`/catalog/favorites/toggle/${designId}`);
+            return response.data.favorited;
         } catch (e) {
             console.error('Error toggling favorite on backend:', e);
             return false;
@@ -90,15 +77,12 @@ export class CatalogoServicio implements ICatalogo {
 
     async getFavorites(search?: string): Promise<Tshirt[]> {
         try {
-            const url = new URL(`${this.baseUrl}/favorites`);
+            const params: any = {};
             if (search && search.trim()) {
-                url.searchParams.append('search', search.trim());
+                params.search = search.trim();
             }
-            const response = await fetch(url.toString());
-            if (!response.ok) {
-                throw new Error('Error al obtener favoritos');
-            }
-            const favTshirts = await response.json();
+            const response = await apiClient.get<any[]>('/catalog/favorites', { params });
+            const favTshirts = response.data;
             
             const baseTshirts = await this.getBaseTshirts();
             if (baseTshirts.length === 0) {
@@ -131,18 +115,15 @@ export class CatalogoServicio implements ICatalogo {
 
     async getBaseTshirts(categoriaId?: string, search?: string): Promise<Tshirt[]> {
         try {
-            const url = new URL(`${this.baseUrl}/tshirts`);
+            const params: any = {};
             if (categoriaId) {
-                url.searchParams.append('category_id', categoriaId);
+                params.category_id = categoriaId;
             }
             if (search && search.trim()) {
-                url.searchParams.append('search', search.trim());
+                params.search = search.trim();
             }
-            const response = await fetch(url.toString());
-            if (!response.ok) {
-                throw new Error('Error al obtener poleras base');
-            }
-            return await response.json();
+            const response = await apiClient.get<Tshirt[]>('/catalog/tshirts', { params });
+            return response.data;
         } catch (e) {
             console.error('Error fetching base tshirts from backend:', e);
             return [];
@@ -153,17 +134,12 @@ export class CatalogoServicio implements ICatalogo {
         const formData = new FormData();
         formData.append('file', file);
         
-        const response = await fetch(`${this.baseUrl}/upload-design`, {
-            method: 'POST',
-            body: formData,
+        const response = await apiClient.post<{ image_url: string }>('/catalog/upload-design', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
         });
         
-        if (!response.ok) {
-            const errData = await response.json().catch(() => ({}));
-            throw new Error(errData.detail || 'Error al subir diseño propio.');
-        }
-        
-        const data = await response.json();
-        return data.image_url;
+        return response.data.image_url;
     }
 }

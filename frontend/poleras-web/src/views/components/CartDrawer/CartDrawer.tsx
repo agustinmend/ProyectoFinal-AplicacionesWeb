@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Tshirt } from '../../../models/types';
+import { useAuth } from '../../../context/AuthContext';
 import './CartDrawer.css';
 
 interface CartItem {
@@ -27,6 +28,7 @@ export function CartDrawer({
   onClearCart,
 }: CartDrawerProps) {
   const [loading, setLoading] = useState(false);
+  const { isAuthenticated } = useAuth();
 
   const calculateSubtotal = () => {
     return cart.reduce((sum, item) => {
@@ -44,6 +46,10 @@ export function CartDrawer({
 
   const handleCotizar = async () => {
     if (cart.length === 0) return;
+    if (!isAuthenticated) {
+      alert('Debes iniciar sesión para enviar una cotización por WhatsApp.');
+      return;
+    }
     setLoading(true);
 
     try {
