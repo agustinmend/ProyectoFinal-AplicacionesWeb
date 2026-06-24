@@ -77,15 +77,48 @@ const MOCK_TSHIRTS: Tshirt[] = [
 ];
 
 export class CatalogoServicio implements ICatalogo {
+    private baseUrl = 'http://localhost:8001/catalog';
+
     async getCategorias(): Promise<Category[]> {
-        return MOCK_CATEGORIES;
+        try {
+            const response = await fetch(`${this.baseUrl}/categories`);
+            if (!response.ok) {
+                throw new Error('Error al obtener categorías');
+            }
+            return await response.json();
+        } catch (e) {
+            console.error('Error fetching categories from backend, using mocks:', e);
+            return MOCK_CATEGORIES;
+        }
     }
 
-    async getTshirts(categoriaId?: string): Promise<Tshirt[]> {
-        if (categoriaId) {
-            return MOCK_TSHIRTS.filter(tshirt => tshirt.categoryid === categoriaId);
+    async getTshirts(categoriaId?: string, search?: string): Promise<Tshirt[]> {
+        try {
+            const url = new URL(`${this.baseUrl}/tshirts`);
+            if (categoriaId) {
+                url.searchParams.append('category_id', categoriaId);
+            }
+            if (search && search.trim()) {
+                url.searchParams.append('search', search.trim());
+            }
+            const response = await fetch(url.toString());
+            if (!response.ok) {
+                throw new Error('Error al obtener poleras');
+            }
+            return await response.json();
+        } catch (e) {
+            console.error('Error fetching tshirts from backend, using mocks:', e);
+            // Si falla y hay búsqueda, hacemos un filtro básico en mocks para que no falle completamente
+            let list = MOCK_TSHIRTS;
+            if (categoriaId) {
+                list = list.filter(tshirt => tshirt.categoryid === categoriaId);
+            }
+            if (search && search.trim()) {
+                const term = search.toLowerCase();
+                list = list.filter(tshirt => tshirt.name.toLowerCase().includes(term) || tshirt.description.toLowerCase().includes(term));
+            }
+            return list;
         }
-        return MOCK_TSHIRTS;
     }
 
     async getTshirtSizes(tshirtId: string): Promise<TshirtSize[]> {

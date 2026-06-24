@@ -11,6 +11,7 @@ export interface Tshirt {
     description: string;
     base_price: string;
     is_active: boolean;
+    image_url?: string;
 }
 
 export interface TshirtSize {

@@ -39,7 +39,7 @@ export function TshirtDetalle({ tshirt, onClose, onAddToCart }: TshirtDetallePro
         <div className="tshirt-details-modal__image-container">
           <img
             className="tshirt-details-modal__image"
-            src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&auto=format&fit=crop&q=80"
+            src={tshirt.image_url || "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&auto=format&fit=crop&q=80"}
             alt={tshirt.name}
           />
         </div>

@@ -42,7 +42,24 @@ services:
       depends_on:
         postgres:
           condition: service_healthy
+        elasticsearch:
+          condition: service_started
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+    container_name: poleras_elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms256m -Xmx256m
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    mem_limit: 512m
 
 volumes:
   postgres_data:
   media_files:
+  elasticsearch_data:
+

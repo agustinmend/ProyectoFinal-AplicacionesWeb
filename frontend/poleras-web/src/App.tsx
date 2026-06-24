@@ -7,15 +7,13 @@ import type { Tshirt } from './models/types';
 import './views/styles/App.css';
 
 function App() {
-  const { categories, selectedCategoryId, tshirts, loading, error, selectCategory } = useCatalog();
   const [searchQuery, setSearchQuery] = useState('');
+  const { categories, selectedCategoryId, tshirts, loading, error, selectCategory } = useCatalog(searchQuery);
   const [selectedTshirt, setSelectedTshirt] = useState<Tshirt | null>(null);
   const [cart, setCart] = useState<{ tshirt: Tshirt; size: string; color: string; quantity: number }[]>([]);
 
-  // Filtrado de poleras por texto de búsqueda (cliente)
-  const filteredTshirts = tshirts.filter((tshirt) =>
-    tshirt.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // La búsqueda y el filtrado se realizan en el backend con Elasticsearch
+  const filteredTshirts = tshirts;
 
   const handlePersonalizeClick = () => {
     alert('¡Próximamente! Redirigiendo al customizador de poleras...');

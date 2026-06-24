@@ -30,7 +30,7 @@ export function TshirtCard({ tshirt, categoryName, onClick }: TshirtCardProps) {
         */}
                 <img
                     className="tshirt-card__image"
-                    src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&auto=format&fit=crop&q=80"
+                    src={tshirt.image_url || "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&auto=format&fit=crop&q=80"}
                     alt={tshirt.name}
                     loading="lazy"
                 />

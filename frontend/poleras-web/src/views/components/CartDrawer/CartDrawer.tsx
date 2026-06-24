@@ -131,7 +131,7 @@ export function CartDrawer({
                     <div className="cart-item__image-container">
                       <img
                         className="cart-item__image"
-                        src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&auto=format&fit=crop&q=80"
+                        src={item.tshirt.image_url || "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&auto=format&fit=crop&q=80"}
                         alt={item.tshirt.name}
                       />
                     </div>
