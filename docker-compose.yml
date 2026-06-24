@@ -39,6 +39,7 @@ services:
         - "8001:8001"
       volumes:
         - ./backend/app:/app
+        - media_files:/app/static/media
       depends_on:
         postgres:
           condition: service_healthy
