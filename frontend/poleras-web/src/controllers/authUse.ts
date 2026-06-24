@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authServicio } from '../models/authServicio';
-import type { LoginRequest, UserResponse } from '../models/types';
+import type { LoginRequest, UserResponse, RegisterRequest } from '../models/types';
 
 export const useAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -50,5 +50,22 @@ export const useAuth = () => {
     navigate('/login');
   };
 
-  return { login, logout, user, isLoading, error };
+    const register = async (data: RegisterRequest) => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            await authServicio.register(data);
+            navigate('/login');
+        } catch (err: any) {
+        if (err.response?.status === 400) {
+            setError('El correo ya está registrado.');
+        } else {
+            setError('Error al crear la cuenta. Inténtalo de nuevo.');
+        }
+        } finally {
+        setIsLoading(false);
+        }
+  };
+
+  return { register, login, logout, user, isLoading, error };
 };

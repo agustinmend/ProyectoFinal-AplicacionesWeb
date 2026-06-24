@@ -1,7 +1,7 @@
 // src/models/authServicio.ts
 import axios from 'axios';
 import type { AxiosError, InternalAxiosRequestConfig } from 'axios';
-import type { LoginRequest, TokenResponse, UserResponse } from './types';
+import type { LoginRequest, TokenResponse, UserResponse, RegisterRequest } from './types';
 
 // La URL base debe venir de variables de entorno en producción (VITE_API_BASE_URL)
 const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001';
@@ -76,5 +76,9 @@ export const authServicio = {
   logout: () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
-  }
+  },
+
+  register: async (data: RegisterRequest): Promise<void> => {
+    await apiClient.post('/auth/register', data);
+  },
 };

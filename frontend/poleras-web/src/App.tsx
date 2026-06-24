@@ -8,6 +8,7 @@ import type { Tshirt } from './models/types';
 import './views/styles/App.css';
 
 const LoginScreen = lazy(() => import('./views/components/Login/Login').then(module => ({ default: module.Login })));
+const RegisterScreen = lazy(() => import('./views/components/Register/Register').then(module => ({ default: module.Register })));
 
 function CatalogoScreen() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -206,6 +207,7 @@ function App() {
           <Route path="/" element={<CatalogoScreen />} />
           <Route path="/login" element={<LoginScreen />} />
           <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/registro" element={<RegisterScreen />} />
         </Routes>
       </Suspense>
     </BrowserRouter>

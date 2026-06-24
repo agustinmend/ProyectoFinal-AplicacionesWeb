@@ -1,0 +1,134 @@
+.register {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #f9fafb;
+  font-family: inherit;
+  padding: 1rem;
+}
+
+.register__card {
+  width: 100%;
+  max-width: 420px;
+  background-color: #ffffff;
+  padding: 2.5rem;
+  border-radius: 24px; /* Bordes redondeados como en la imagen */
+  border: 1px solid #e5e7eb;
+}
+
+.register__header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.register__title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #111;
+  margin-bottom: 0.5rem;
+}
+
+.register__subtitle {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.register__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.register__group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.register__label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #444;
+}
+
+.register__input {
+  padding: 0.8rem 1rem;
+  background-color: #f8f9fa; /* Fondo gris claro de los inputs */
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 1rem;
+  color: #111; /* <-- Añade esta línea obligatoriamente */
+}
+
+.register__submit {
+  background-color: #1a1a1a;
+  color: white;
+  border: none;
+  padding: 0.9rem;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 0.5rem;
+}
+
+.register__divider {
+  position: relative;
+  text-align: center;
+  margin: 1.5rem 0;
+}
+
+.register__divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  border-top: 1px solid #eee;
+}
+
+.register__divider-text {
+  position: relative;
+  background: white;
+  padding: 0 0.75rem;
+  color: #999;
+  font-size: 0.8rem;
+}
+
+.register__social {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.8rem;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.register__social-icon {
+  width: 18px;
+}
+
+.register__footer {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.register__link {
+  color: #000;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.register__error {
+  color: #d32f2f;
+  background: #ffebee;
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+}
