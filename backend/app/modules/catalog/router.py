@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
+from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, Request
 import os
 from sqlalchemy.orm import Session
 from typing import List, Optional
@@ -82,6 +82,7 @@ def get_preset_designs(db: Session = Depends(get_db)):
 
 @router.post("/upload-design")
 def upload_design(
+    request: Request,
     file: UploadFile = File(...)
 ):
     import shutil
@@ -103,4 +104,5 @@ def upload_design(
     with open(filepath, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
         
-    return {"image_url": f"http://localhost:8001/static/custom_designs/{filename}"}
+    base_url = str(request.base_url).rstrip("/")
+    return {"image_url": f"{base_url}/static/custom_designs/{filename}"}
