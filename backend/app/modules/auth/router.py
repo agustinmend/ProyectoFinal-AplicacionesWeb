@@ -5,6 +5,7 @@ from shared.database import get_db
 from .schemas import RegisterRequest, LoginRequest, RefreshRequest, TokenResponse, UserResponse
 from . import service
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from .schemas import GoogleAuthRequest
 
 security = HTTPBearer()
 router = APIRouter(prefix="/auth", tags=["Auth"])
@@ -63,3 +64,14 @@ def me(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token inválido"
         )
+    
+@router.post("/google", response_model=TokenResponse)
+async def google_login(data: GoogleAuthRequest, db: Session = Depends(get_db)):
+    try:
+        user, access_token, refresh_token = await service.google_auth(db, data.id_token)
+        return TokenResponse(
+            access_token=access_token,
+            refresh_token=refresh_token,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))
