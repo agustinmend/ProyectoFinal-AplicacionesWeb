@@ -4,6 +4,8 @@ from jose import jwt, JWTError
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from sqlalchemy import select
+import httpx
+from .models import OAuthAccount
 import os
 
 from .models import User, RefreshToken
@@ -11,6 +13,7 @@ from .schemas import RegisterRequest, LoginRequest
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+GOOGLE_USERINFO_URL = "https://www.googleapis.com/oauth2/v3/userinfo"
 SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "dev-secret-cambiame")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 15
@@ -120,3 +123,75 @@ def refresh_access_token(db: Session, refresh_token: str) -> tuple[str, str]:
     db.commit()
 
     return new_access, new_refresh
+
+async def google_auth(db: Session, id_token: str) -> tuple[User, str, str]:
+    async with httpx.AsyncClient() as client:
+        response = await client.get(
+            GOOGLE_USERINFO_URL,
+            headers={"Authorization": f"Bearer {id_token}"}
+        )
+
+    if response.status_code != 200:
+        raise ValueError("Token de Google inválido")
+
+    data = response.json()
+    google_id = data.get("sub")
+    email     = data.get("email")
+    full_name = data.get("name", email)
+
+    if not google_id or not email:
+        raise ValueError("No se pudo obtener información del usuario de Google")
+
+    # Buscar si ya existe la cuenta OAuth
+    oauth = db.execute(
+        select(OAuthAccount).where(
+            OAuthAccount.provider == "google",
+            OAuthAccount.provider_user_id == google_id,
+        )
+    ).scalar_one_or_none()
+
+    if oauth:
+        user = db.execute(
+            select(User).where(User.id == oauth.user_id)
+        ).scalar_one()
+    else:
+        # Buscar si el email ya existe (usuario registrado normalmente)
+        user = db.execute(
+            select(User).where(User.email == email)
+        ).scalar_one_or_none()
+
+        if not user:
+            user = User(
+                id=uuid.uuid4(),
+                email=email,
+                password_hash=None,
+                full_name=full_name,
+                role="cliente",
+            )
+            db.add(user)
+            db.flush()  # para tener el id antes del commit
+
+        db.add(OAuthAccount(
+            id=uuid.uuid4(),
+            user_id=user.id,
+            provider="google",
+            provider_user_id=google_id,
+        ))
+        db.commit()
+        db.refresh(user)
+
+    if not user.is_active:
+        raise ValueError("Usuario desactivado")
+
+    access_token  = create_access_token(str(user.id), user.role)
+    refresh_token = create_refresh_token()
+
+    db.add(RefreshToken(
+        id=uuid.uuid4(),
+        user_id=user.id,
+        token_hash=hash_password(refresh_token),
+        expires_at=datetime.now(timezone.utc) + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS),
+    ))
+    db.commit()
+
+    return user, access_token, refresh_token

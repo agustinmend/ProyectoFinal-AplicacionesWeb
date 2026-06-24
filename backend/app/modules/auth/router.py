@@ -5,6 +5,9 @@ from shared.database import get_db
 from .schemas import RegisterRequest, LoginRequest, RefreshRequest, TokenResponse, UserResponse
 from . import service
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from .schemas import GoogleAuthRequest
+from .models import User
+from .dependencies import get_current_user
 
 security = HTTPBearer()
 router = APIRouter(prefix="/auth", tags=["Auth"])
@@ -44,22 +47,16 @@ def refresh(data: RefreshRequest, db: Session = Depends(get_db)):
 
 
 @router.get("/me", response_model=UserResponse)
-def me(
-    db: Session = Depends(get_db),
-    credentials: HTTPAuthorizationCredentials = Depends(security)
-):
-    from sqlalchemy import select
-    from .models import User
+def get_my_profile(current_user: User = Depends(get_current_user)):
+    return current_user
+    
+@router.post("/google", response_model=TokenResponse)
+async def google_login(data: GoogleAuthRequest, db: Session = Depends(get_db)):
     try:
-        payload = service.decode_access_token(credentials.credentials)
-        user = db.execute(
-            select(User).where(User.id == payload["sub"])
-        ).scalar_one_or_none()
-        if not user:
-            raise HTTPException(status_code=404, detail="Usuario no encontrado")
-        return user
-    except Exception:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token inválido"
+        user, access_token, refresh_token = await service.google_auth(db, data.id_token)
+        return TokenResponse(
+            access_token=access_token,
+            refresh_token=refresh_token,
         )
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))

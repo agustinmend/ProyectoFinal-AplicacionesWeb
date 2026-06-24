@@ -1,6 +1,7 @@
 from pydantic import BaseModel, EmailStr
 from uuid import UUID
 from datetime import datetime
+from .models import UserRole
 
 class RegisterRequest(BaseModel):
     email: EmailStr
@@ -16,7 +17,7 @@ class UserResponse(BaseModel):
     id: UUID
     email: str
     full_name: str
-    role: str
+    role: UserRole
     is_active: bool
     created: datetime
 
@@ -30,3 +31,6 @@ class TokenResponse(BaseModel):
 
 class RefreshRequest(BaseModel):
     refresh_token: str
+
+class GoogleAuthRequest(BaseModel):
+    id_token: str

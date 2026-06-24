@@ -1,0 +1,213 @@
+:root {
+  --color-background: #f9fafb; /* Cambia a #121212 si el diseño es Dark Mode */
+  --color-card-bg: #ffffff;    /* Cambia a #1e1e1e si es Dark Mode */
+  --color-text-main: #111827;  /* Cambia a #ffffff si es Dark Mode */
+  --color-text-muted: #6b7280;
+  --color-border: #d1d5db;
+  --color-primary: #000000;    /* Color del botón principal */
+  --color-primary-hover: #374151;
+  --color-input-bg: #ffffff;
+}
+
+/* Bloque Principal */
+.login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: var(--color-background);
+  font-family: system-ui, -apple-system, sans-serif;
+  padding: 1rem;
+}
+
+/* Tarjeta Central */
+.login__card {
+  width: 100%;
+  max-width: 420px;
+  background-color: var(--color-card-bg);
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+/* Cabecera de la Tarjeta */
+.login__header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.login__title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin: 0 0 0.5rem 0;
+}
+
+.login__subtitle {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+/* Formulario y Grupos */
+.login__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.login__group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.login__label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+.login__input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  color: var(--color-text-main);
+  background-color: var(--color-input-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.login__input::placeholder {
+  color: #9ca3af;
+}
+
+.login__input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+/* Opciones (Olvidaste tu contraseña) */
+.login__options {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.login__forgot {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.login__forgot:hover {
+  text-decoration: underline;
+}
+
+/* Botones */
+.login__submit {
+  width: 100%;
+  padding: 0.875rem;
+  background-color: var(--color-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 0.5rem;
+}
+
+.login__submit:hover {
+  background-color: var(--color-primary-hover);
+}
+
+/* Divisor Visual */
+.login__divider {
+  position: relative;
+  text-align: center;
+  margin: 1.5rem 0;
+}
+
+.login__divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  border-top: 1px solid var(--color-border);
+  z-index: 1;
+}
+
+.login__divider-text {
+  position: relative;
+  background-color: var(--color-card-bg);
+  padding: 0 1rem;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  z-index: 2;
+}
+
+/* Botón Social */
+.login__social {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.875rem;
+  background-color: transparent;
+  color: var(--color-text-main);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.login__social:hover {
+  background-color: #f3f4f6;
+}
+
+.login__social-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Footer de la tarjeta */
+.login__footer {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.login__footer-text {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.login__link {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login__link:hover {
+  text-decoration: underline;
+}
+
+/* Estado de error */
+.login__error {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
