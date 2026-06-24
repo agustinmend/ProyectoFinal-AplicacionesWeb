@@ -17,8 +17,9 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 15
 REFRESH_TOKEN_EXPIRE_DAYS = 7
 
 def hash_password(password: str) -> str:
+    if len(password.encode('utf-8')) > 72:
+        raise ValueError("La contraseña no puede superar los 72 caracteres")
     return pwd_context.hash(password)
-
 
 def verify_password(plain: str, hashed: str) -> bool:
     return pwd_context.verify(plain, hashed)
