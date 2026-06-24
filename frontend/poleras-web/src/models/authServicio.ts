@@ -73,12 +73,18 @@ export const authServicio = {
     return response.data;
   },
 
+  register: async (data: RegisterRequest): Promise<void> => {
+    await apiClient.post('/auth/register', data);
+  },
+  
+  googleLogin: async (idToken: string): Promise<TokenResponse> => {
+    // Se envía el id_token obtenido de Google al backend asíncrono
+    const response = await apiClient.post<TokenResponse>('/auth/google', { id_token: idToken });
+    return response.data;
+  },
+  
   logout: () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
-  },
-
-  register: async (data: RegisterRequest): Promise<void> => {
-    await apiClient.post('/auth/register', data);
   },
 };

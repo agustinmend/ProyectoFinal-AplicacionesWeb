@@ -1,20 +1,29 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
+import { BrowserRouter, Routes, Route, Link, Navigate } from 'react-router-dom';
 import { useCatalog } from './controllers/catalogoUse';
 import { TshirtCard } from './views/components/TshirtCard/TshirtCard';
 import { TshirtDetalle } from './views/components/TsirtDetalle/TshirtDetalle.tsx';
 import { CartDrawer } from './views/components/CartDrawer/CartDrawer';
 import { Customizer } from './views/components/Customizer/Customizer';
+import { useAuth } from './context/AuthContext';
 import type { Tshirt } from './models/types';
 import './views/styles/App.css';
 
-function App() {
+// Code Splitting obligatorio por ruta utilizando React.lazy + Suspense para optimizar el peso de los chunks
+const LoginScreen = lazy(() => import('./views/components/Login/Login').then(module => ({ default: module.Login })));
+const RegisterScreen = lazy(() => import('./views/components/Register/Register').then(module => ({ default: module.Register })));
+
+function CatalogoScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [view, setView] = useState<'catalog' | 'customizer'>('catalog');
   const { categories, selectedCategoryId, tshirts, favoriteIds, loading, error, selectCategory, toggleFavorite } = useCatalog(searchQuery);
   const [selectedTshirt, setSelectedTshirt] = useState<Tshirt | null>(null);
   const [cart, setCart] = useState<{ tshirt: Tshirt; size: string; color: string; quantity: number }[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
-  // La búsqueda y el filtrado se realizan en el backend con Elasticsearch
+  // Consumo del estado global de autenticación requerido
+  const { user, isAuthenticated, logout } = useAuth();
+
   const filteredTshirts = tshirts;
 
   const handlePersonalizeClick = () => {
@@ -37,9 +46,6 @@ function App() {
     setIsCartOpen(true); // Abre automáticamente el carrito lateral
   };
 
-  const [isCartOpen, setIsCartOpen] = useState(false);
-
-  // Mostrar la barra lateral del carrito de compras
   const handleViewCart = () => {
     setIsCartOpen(true);
   };
@@ -86,10 +92,29 @@ function App() {
         </div>
 
         <div className="header__actions">
-          <button className="header__btn header__btn--login" title="Iniciar Sesión">
-            <span className="header__btn-icon">👤</span>
-            <span className="header__btn-text">Ingresar</span>
-          </button>
+          {/* Control reactivo del Header según el estado de sesión para diferenciar flujos visuales */}
+          {isAuthenticated && user ? (
+            <div className="header__user-menu" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <span className="header__user-name" style={{ fontWeight: 600, color: 'var(--text-h)' }}>
+                {user.full_name}
+              </span>
+              {/* Si el rol es administrador, se expone el enlace al panel operativo */}
+              {user.role === 'administrador' && (
+                <Link to="/admin" className="header__btn header__btn--admin" style={{ textDecoration: 'none' }}>
+                  Panel Admin
+                </Link>
+              )}
+              <button onClick={logout} className="header__btn header__btn--logout" title="Cerrar Sesión">
+                Salir
+              </button>
+            </div>
+          ) : (
+            <Link to="/login" className="header__btn header__btn--login" title="Iniciar Sesión" style={{ textDecoration: 'none' }}>
+              <span className="header__btn-icon">👤</span>
+              <span className="header__btn-text">Ingresar</span>
+            </Link>
+          )}
+
           <button className="header__btn header__btn--cart" title="Ver Carrito" onClick={handleViewCart}>
             <span className="header__btn-icon">🛒</span>
             <span className="header__cart-badge">
@@ -168,7 +193,6 @@ function App() {
             {!loading && !error && filteredTshirts.length > 0 && (
               <div className="catalog-grid">
                 {filteredTshirts.map((tshirt) => {
-                  // Obtenemos el nombre de la categoría del listado principal
                   const category = categories.find((c) => c.id === tshirt.categoryid);
                   const categoryName = category ? category.name : 'Polera';
 
@@ -216,6 +240,36 @@ function App() {
         onClearCart={handleClearCart}
       />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Suspense fallback={
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', fontFamily: 'sans-serif', gap: '1rem' }}>
+          <div className="spinner"></div>
+          <p style={{ fontWeight: 500, color: '#4b5563' }}>Cargando aplicación...</p>
+        </div>
+      }>
+        <Routes>
+          <Route path="/" element={<CatalogoScreen />} />
+          <Route path="/login" element={<LoginScreen />} />
+          <Route path="/registro" element={<RegisterScreen />} />
+          
+          {/* Ruta del Panel Administrativo integrado internamente dentro de la SPA */}
+          <Route path="/admin" element={
+            <div style={{ padding: '3rem', fontFamily: 'sans-serif', maxWidth: '800px', margin: '0 auto' }}>
+              <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Módulo de Administración</h1>
+              <p style={{ color: '#4b5563', marginBottom: '2rem' }}>CRUD operativo y gestión del catálogo principal.</p>
+              <Link to="/" style={{ color: '#000', fontWeight: 700, textDecoration: 'underline' }}>Volver al catálogo público</Link>
+            </div>
+          } />
+          
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
   );
 }
 
