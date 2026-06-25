@@ -1,6 +1,10 @@
 import os
 import urllib.parse
+from sqlalchemy.orm import Session
+from sqlalchemy import select, or_
 from .schemas import CotizacionRequest
+from .schemas import CotizacionPoleraPersonalizada
+from .models import QuoteConfig
 
 def generate_whatsapp_quotation(data: CotizacionRequest) -> dict:
     whatsapp_number = os.environ.get("WHATSAPP_NUMBER", "59162074399")
@@ -35,3 +39,9 @@ def generate_whatsapp_quotation(data: CotizacionRequest) -> dict:
         "whatsapp_url": whatsapp_url,
         "formatted_message": message
     }
+
+def generar_cotizacion(db: Session, data: CotizacionPoleraPersonalizada) -> float:
+    total_price = data.base_price
+    query = select(QuoteConfig).where(QuoteConfig.label == data.posicion).scalar_one_or_none()
+    config = db.execute(query)
+    return total_price + config.extra_cost

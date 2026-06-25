@@ -45,6 +45,7 @@ class QuoteConfig(UUIDMixin, TimeStampedMixin):
     is_active = models.BooleanField(_('is active'), default=True)
 
     class Meta:
+        managed = False
         db_table = "negocio\".\"quote_configs"
         verbose_name = _('Configuración de cotización')
         verbose_name_plural = _('Configuraciones de cotización')

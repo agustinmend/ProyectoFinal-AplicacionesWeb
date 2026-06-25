@@ -18,3 +18,10 @@ class CotizacionRequest(BaseModel):
 class CotizacionResponse(BaseModel):
     whatsapp_url: str
     formatted_message: str
+
+class CotizacionPoleraPersonalizada(BaseModel):
+    base_price: float
+    size: str
+    posicion: str
+    tamano: str
+    color: str

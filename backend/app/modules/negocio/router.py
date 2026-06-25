@@ -1,4 +1,5 @@
 from fastapi import APIRouter, status
+from shared.database import get_db
 from .schemas import CotizacionRequest, CotizacionResponse
 from . import service
 
